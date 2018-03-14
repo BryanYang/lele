@@ -1,0 +1,75 @@
+@import '../retina.scss';
+.section{
+  display: flex;
+  padding: 10px 20px 10px 14px;
+
+  .img-container{
+    margin-right: 12px; 
+    background: #f1f1f1;
+    display: table-cell;
+    width: 100px;
+    height: 80px;
+    vertical-align: middle;
+    text-align: center;
+    .img{
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  }
+
+  .brief{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 4px 0; 
+    .desc{
+      font-size: 14px;
+      line-height: 14px;
+    }
+  
+    .origin{
+      font-size: 12px;
+      color: #a2a2a2;
+    }
+  }
+ 
+}
+
+.ad{
+  padding: 14px;
+  height: 212px;
+  .title{
+    font-size: 14px;
+    line-height: 14px;
+    margin-bottom: 12px; 
+  }
+
+  .img-container{
+    height: 158px;
+    width: 100%;
+    position: relative;
+
+    .img{
+      height: 100%;
+      width: 100%;
+      object-fit: cover;
+    }
+    .ad-identification{
+      position: absolute;
+      
+      background: #4d0000;
+      color: #fff;
+      border-radius: 4px;
+      font-size: 8px;
+      top: 10px;
+      left: 10px;
+      padding: 4px;
+    }
+  }
+}
+
+.am-navbar{
+  background: rgb(228, 53, 58);
+}

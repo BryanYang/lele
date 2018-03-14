@@ -1,0 +1,14 @@
+.home{
+    position: fixed;
+    height: 100%; 
+    width: 100%; 
+    top: 0;
+    display: flex;
+    flex-direction: column;
+    font-size: 28px;
+
+    .am-tab-bar{
+        flex: 1;
+    }
+}
+

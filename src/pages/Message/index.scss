@@ -1,0 +1,22 @@
+.message{
+    width: 100%;
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    .input{
+    }
+
+    .am-grid-icon{
+        display: none;
+    }
+
+    .am-grid-text{
+        margin-top: 0;
+    }
+
+    .input-hot{
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+}
