@@ -2,9 +2,11 @@
   "name": "lele",
   "version": "0.1.0",
   "private": true,
+  "homepage": "/web",
   "dependencies": {
     "antd-mobile": "^2.1.6",
     "autoprefixer": "7.1.6",
+    "axios": "^0.18.0",
     "babel-core": "6.26.0",
     "babel-eslint": "7.2.3",
     "babel-jest": "20.0.3",
@@ -48,6 +50,7 @@
   "scripts": {
     "start": "node scripts/start.js",
     "build": "node scripts/build.js",
+    "pub": "./bin/pub.sh",
     "svg": "rm -rf ./src/assets/out && ./node_modules/.bin/svg-sprite -sD ./src/assets/out --sscss --sx ./src/assets/svg/*.svg",
     "test": "node scripts/test.js --env=jsdom",
     "build:dev": "NODE_ENV=development ./node_modules/webpack/bin/webpack.js --config config/webpack.config.dev.js"
@@ -110,12 +113,12 @@
     "eslint-plugin-jsx-a11y": "^4.0.0",
     "eslint-plugin-react": "^6.10.3",
     "html-webpack-plugin": "^3.0.6",
-    "svg-sprite": "^1.3.7",
-    "svg-sprite-loader": "^3.7.0",
-    "webpack": "3.8.1",
     "postcss-px2rem": "^0.3.0",
     "postcss-scss": "^1.0.2",
     "precss": "^2.0.0",
+    "svg-sprite": "^1.3.7",
+    "svg-sprite-loader": "^3.7.0",
+    "webpack": "3.8.1",
     "webpack-cli": "^2.0.11"
   }
 }

@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { TabBar, NavBar, Icon } from 'antd-mobile';
 import Message from '@pages/Message/index';
 import Explore from '@pages/Explore/index';
+import Hall from '@pages/Hall/index';
 
 import { Img } from '@components/Icon';
 
@@ -70,14 +71,13 @@ export default class Home extends Component {
             selectedIcon={<Img type="dating_alt"/>}
             title="大厅"
             key="hall"
-            badge={'new'}
             selected={this.state.selectedTab === 'hall'}
             onPress={() => {
               this.props.history.push('/hall')
             }}
             data-seed="logId1"
           >
-            {this.renderContent('Koubei')}
+            <Hall /> 
           </TabBar.Item>
           <TabBar.Item
             icon={<Img type="message" />}

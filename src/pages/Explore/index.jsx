@@ -1,10 +1,15 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-
 import { ListView, NavBar} from 'antd-mobile';
-import { TabBar, Icon } from 'antd-mobile';
+import { TabBar, Icon, InputItem } from 'antd-mobile';
+import axios from 'axios';
+
 import { Img, Svg } from '@components/Icon';
 import Search from '@assets/svg/search.svg';
+import { Link } from "react-router-dom";
+
+
+
 
 import './index.scss';
 
@@ -36,29 +41,15 @@ let pageIndex = 0;
 const dataBlobs = {};
 let sectionIDs = [];
 let rowIDs = [];
-function genData(pIndex = 0) {
-  for (let i = 0; i < NUM_SECTIONS; i++) {
-    const ii = (pIndex * NUM_SECTIONS) + i;
-    const sectionName = `Section ${ii}`;
-    sectionIDs.push(sectionName);
-    dataBlobs[sectionName] = sectionName;
-    rowIDs[ii] = [];
 
-    for (let jj = 0; jj < NUM_ROWS_PER_SECTION; jj++) {
-      const rowName = `S${ii}, R${jj}`;
-      rowIDs[ii].push(rowName);
-      dataBlobs[rowName] = rowName;
-    }
-  }
-  sectionIDs = [...sectionIDs];
-  rowIDs = [...rowIDs];
-}
 
 function MyBody(props) {
   return (
     <div className="am-list-body my-body">
       <span style={{ display: 'none' }}>you can custom body wrap element</span>
-      {props.children}
+      {
+        props.children
+      }
     </div>
   );
 }
@@ -67,12 +58,10 @@ export default class Explore extends React.Component {
 
   constructor(props) {
     super(props);
-    const getSectionData = (dataBlob, sectionID) => dataBlob[sectionID];
-    const getRowData = (dataBlob, sectionID, rowID) => dataBlob[rowID];
+    const getRowData = (dataBlob, rowID) => dataBlob[rowID];
 
     const dataSource = new ListView.DataSource({
       getRowData,
-      getSectionHeaderData: getSectionData,
       rowHasChanged: (row1, row2) => row1 !== row2,
       sectionHeaderHasChanged: (s1, s2) => s1 !== s2,
     });
@@ -81,57 +70,82 @@ export default class Explore extends React.Component {
       dataSource,
       isLoading: true,
       height: document.documentElement.clientHeight * 3 / 4,
+      search: false,
     };
+    this.onSearch = this.onSearch.bind(this);
+    this.searchChange = this.searchChange.bind(this);
+    this.cancelSearch = this.cancelSearch.bind(this);
   }
 
   componentDidMount() {
-    // you can scroll to the specified position
-    // setTimeout(() => this.lv.scrollTo(0, 120), 800);
-
-    const hei = document.documentElement.clientHeight - ReactDOM.findDOMNode(this.lv).parentNode.offsetTop;
-    // simulate initial Ajax
-    setTimeout(() => {
-      genData();
-      this.setState({
-        dataSource: this.state.dataSource.cloneWithRowsAndSections(dataBlobs, sectionIDs, rowIDs),
-        isLoading: false,
-        height: hei,
-      });
-    }, 600);
+    this.loadData();
   }
 
+  loadData(){
+    this.setState({isLoading: true});
+    const hei = document.documentElement.clientHeight - ReactDOM.findDOMNode(this.lv).parentNode.offsetTop;
+    axios.get('/app/v1/information').then(({ data: res }) => {
+      this.setState({isLoading: false});
+      console.log(res);
+      if(res.code === 0){
+        this.setState({
+          dataSource: this.state.dataSource.cloneWithRows(res.data.informationVos),
+          isLoading: false,
+          height: hei,
+        });
+      }
+    }) 
+  }
 
   onEndReached(){
 
   }
+
+  onSearch(){
+    console.log(this.searchContent);
+    this.tempDataSource = this.state.dataSource; // 缓存一下，取消的时候还要用。
+    setTimeout(() => {
+      this.setState({dataSource: new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2})});
+    })
+  }
+
+  cancelSearch(){
+    this.setState({
+      dataSource: this.tempDataSource,
+      search: false,
+    })
+  }
+
+  searchChange(v){
+    this.searchContent = v;
+  }
+
   render(){
     const separator = (sectionID, rowID) => (
       <div key={`${sectionID}-${rowID}`} className="border-bt"/>
     );
 
-    let index = data.length - 1;
     const row = (rowData, sectionID, rowID) => {
-      if (index < 0) {
-        index = data.length - 1;
-      }
-      const obj = data[index--];
-      console.log(rowID)
-      const showAd = rowID == 'S1, R2';
+      const obj = rowData[rowID];
+      const showAd = obj.type === 1;
       return (
-        <div>
+        <div key={obj.id}>
         {
-          showAd ? <div className="ad">
-              <div className="title">进一步 再进一步！革命性安卓体验</div>
+          showAd ? <Link to={`/article/${encodeURIComponent(obj.detailurl)}`} >
+            <div className="ad">
+              <div className="title">{obj.title}</div>
               <div className="img-container">
-                <img className="img" alt="" src="https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=1280747493,1814733925&fm=27&gp=0.jpg" />
+                <img className="img" alt="" src={obj.image} />
                 <div className="ad-identification">广告</div>
               </div>
-            </div> : <div className="section" key={rowID} >
-            <div className="img-container"><img src={obj.img} alt="" className="img"/></div>
-            <div className="brief">
-              <div className="desc">{obj.des}</div>
-              <div className="origin">{obj.origin}</div>
-            </div>
+            </div></Link> : <div>
+            <Link to={`/article/${encodeURIComponent(obj.detailurl)}`} className="section">
+              <div className="img-container"><img src={obj.image} alt="" className="img"/></div>
+              <div className="brief">
+                <div className="desc">{obj.title}</div>
+                <div className="origin">{obj.author}</div>
+              </div>
+            </Link>
           </div>
         }
         </div>
@@ -139,18 +153,26 @@ export default class Explore extends React.Component {
     };
 
     return <div>
-      <NavBar
-        mode="dark"
-        onLeftClick={() => console.log('onLeftClick')}
-        rightContent={[
-          <Svg glyph="search" fill="white"/>
-        ]}
-      >发现</NavBar>
+      {
+        this.state.search ? <div className="search">
+          <InputItem className="search-input" onChange={this.searchChange}>
+            <Svg glyph="search" fill="white" onClick={this.onSearch}/> 
+          </InputItem>
+          <span className="cancel-search" onClick={this.cancelSearch}>取消</span>
+        </div> : <NavBar
+          mode="dark"
+          onLeftClick={() => console.log('onLeftClick')}
+          rightContent={[
+            <Svg glyph="search" fill="white" onClick={() => this.setState({search: true})}/>
+          ]}
+        ><span>发现</span></NavBar>
+      }
+      
       <ListView
         ref={el => this.lv = el}
         dataSource={this.state.dataSource}
-        renderFooter={() => (<div style={{ padding: 30, textAlign: 'center' }}>
-          {this.state.isLoading ? 'Loading...' : 'Loaded'}
+        renderFooter={() => (<div className="explore-footer">
+          {this.state.isLoading ? '加载中...' : '没有更多内容'}
         </div>)}
         renderBodyComponent={() => <MyBody />}
         renderRow={row}

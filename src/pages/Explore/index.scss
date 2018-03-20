@@ -1,7 +1,20 @@
 @import '../retina.scss';
+
+.explore-footer{
+  padding: 20px;
+}
+
+a{
+  text-decoration: none;
+  color: #333333;
+}
 .section{
   display: flex;
   padding: 10px 20px 10px 14px;
+  color: #333333;
+  a{
+    text-decoration: none;
+  }
 
   .img-container{
     margin-right: 12px; 
@@ -35,6 +48,10 @@
     }
   }
  
+}
+
+.article{
+  border: none;
 }
 
 .ad{
@@ -72,4 +89,73 @@
 
 .am-navbar{
   background: rgb(228, 53, 58);
+}
+
+article{
+  padding: 14px;
+  color: #333333;
+  .article__title{
+    font-size: 17px;
+    line-height: 20px;
+    letter-spacing: 1px;
+
+  }
+
+  .article__origin{
+    font-size: 12px;
+    color: #a2a2a2;
+    margin-top: 16px;
+    margin-bottom: 20px;
+    span{
+      margin-right: 10px;
+    }
+  }
+
+  .article__content{
+
+  }
+}
+
+.search{
+  display: flex;
+  background:rgb(228, 53, 58); 
+  height: 45px;
+  color: white;
+  div.search-input{
+    flex:1;
+    height: 32px;
+    background: #c30000;
+    min-height: 32px;
+    border-radius: 4px;
+    margin-left: 20px;
+    margin-top: 6px; 
+    input {
+      color: white;
+    }
+    
+    html:not([data-scale]) .am-list-item:not(:last-child) .am-list-line:after{
+      background-color:#c30000;
+      display: none;
+      @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 2dppx){
+        background-color:#c30000;
+        display: none; 
+      }
+    }
+    
+    
+    .am-input-label{
+      width: 30px;
+    }
+    .am-list-line:after{
+      background-color:#c30000;
+      display: none;
+    }
+  }
+  .cancel-search{
+    font-size: 16px;
+    text-align: center;
+    line-height: 40px;
+    padding-right: 20px;
+    padding-left:  15px;
+  }
 }

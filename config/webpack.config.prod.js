@@ -94,6 +94,9 @@ module.exports = {
       // Support React Native Web
       // https://www.smashingmagazine.com/2016/08/a-glimpse-into-the-future-with-react-native-for-web/
       'react-native': 'react-native-web',
+      '@components': path.join(__dirname, '../src/components'),
+      '@pages': path.join(__dirname, '../src/pages'),
+      '@assets': path.join(__dirname, '../src/assets'),
     },
     plugins: [
       // Prevents users from importing files from outside of src/ (or node_modules/).
@@ -143,6 +146,20 @@ module.exports = {
               name: 'static/media/[name].[hash:8].[ext]',
             },
           },
+          {
+            test: /\.svg$/,
+            use: [
+              {
+                loader: 'babel-loader',
+              },
+              { loader: 'svg-sprite-loader', options: {
+                runtimeGenerator: require.resolve('./svg-to-icon-component-runtime-generator'),
+                runtimeOptions: {
+                  iconModule: './src/components/Icon/index.jsx' // Relative to current build context folder
+                } 
+              } },
+            ]
+          },
           // Process JS with Babel.
           {
             test: /\.(js|jsx|mjs)$/,
@@ -166,7 +183,7 @@ module.exports = {
           // use the "style" loader inside the async code so CSS from them won't be
           // in the main CSS file.
           {
-            test: /\.css$/,
+            test: [/\.css$/, /\.scss$/],
             loader: ExtractTextPlugin.extract(
               Object.assign(
                 {
@@ -187,23 +204,6 @@ module.exports = {
                     },
                     {
                       loader: require.resolve('postcss-loader'),
-                      options: {
-                        // Necessary for external CSS imports to work
-                        // https://github.com/facebookincubator/create-react-app/issues/2677
-                        ident: 'postcss',
-                        plugins: () => [
-                          require('postcss-flexbugs-fixes'),
-                          autoprefixer({
-                            browsers: [
-                              '>1%',
-                              'last 4 versions',
-                              'Firefox ESR',
-                              'not ie < 9', // React doesn't support IE8 anyway
-                            ],
-                            flexbox: 'no-2009',
-                          }),
-                        ],
-                      },
                     },
                   ],
                 },
