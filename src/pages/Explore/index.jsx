@@ -75,6 +75,8 @@ export default class Explore extends React.Component {
     this.onSearch = this.onSearch.bind(this);
     this.searchChange = this.searchChange.bind(this);
     this.cancelSearch = this.cancelSearch.bind(this);
+    this.onEndReached = this.onEndReached.bind(this);
+    this.query = { page: 1, content: '' };
   }
 
   componentDidMount() {
@@ -84,40 +86,37 @@ export default class Explore extends React.Component {
   loadData(){
     this.setState({isLoading: true});
     const hei = document.documentElement.clientHeight - ReactDOM.findDOMNode(this.lv).parentNode.offsetTop;
-    axios.get('/app/v1/information').then(({ data: res }) => {
-      this.setState({isLoading: false});
-      console.log(res);
-      if(res.code === 0){
+    axios.get('/app/v1/information', {
+      params: this.query
+    }).then(({ data: res }) => {
+      this.setState({isLoading: false, height: hei,});
+      if(res.code === 0 && res.data){
+        const informationVos = res.data.informationVos || [];
         this.setState({
-          dataSource: this.state.dataSource.cloneWithRows(res.data.informationVos),
-          isLoading: false,
-          height: hei,
+          dataSource: this.state.dataSource.cloneWithRows(informationVos),
         });
       }
     }) 
   }
 
   onEndReached(){
-
+    this.query.page += 1;
+    this.loadData();
   }
 
   onSearch(){
-    console.log(this.searchContent);
-    this.tempDataSource = this.state.dataSource; // 缓存一下，取消的时候还要用。
-    setTimeout(() => {
-      this.setState({dataSource: new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2})});
-    })
+    this.loadData();
   }
 
   cancelSearch(){
     this.setState({
-      dataSource: this.tempDataSource,
       search: false,
-    })
+    });
+    this.loadData();
   }
 
   searchChange(v){
-    this.searchContent = v;
+    this.query.content = v
   }
 
   render(){
@@ -154,7 +153,7 @@ export default class Explore extends React.Component {
 
     return <div>
       {
-        this.state.search ? <div className="search">
+        this.state.search ? <div className="search" id="explore-search">
           <InputItem className="search-input" onChange={this.searchChange}>
             <Svg glyph="search" fill="white" onClick={this.onSearch}/> 
           </InputItem>
@@ -163,7 +162,7 @@ export default class Explore extends React.Component {
           mode="dark"
           onLeftClick={() => console.log('onLeftClick')}
           rightContent={[
-            <Svg glyph="search" fill="white" onClick={() => this.setState({search: true})}/>
+            <Svg glyph="search" key="search" fill="white" onClick={() => this.setState({search: true})}/>
           ]}
         ><span>发现</span></NavBar>
       }
@@ -172,7 +171,7 @@ export default class Explore extends React.Component {
         ref={el => this.lv = el}
         dataSource={this.state.dataSource}
         renderFooter={() => (<div className="explore-footer">
-          {this.state.isLoading ? '加载中...' : '没有更多内容'}
+          {this.state.isLoading ? '加载中...' : '没有更多内容了'}
         </div>)}
         renderBodyComponent={() => <MyBody />}
         renderRow={row}
@@ -182,7 +181,6 @@ export default class Explore extends React.Component {
           overflow: 'auto',
         }}
         pageSize={4}
-        onScroll={() => { console.log('scroll'); }}
         scrollRenderAheadDistance={500}
         onEndReached={this.onEndReached}
         onEndReachedThreshold={10}

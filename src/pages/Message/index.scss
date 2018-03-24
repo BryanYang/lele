@@ -1,22 +1,23 @@
-.message{
+#message{
     width: 100%;
-    position: absolute;
-    bottom: 0;
-    width: 100%;
-    .input{
+    .am-list-content{
+        font-size: 14px;
+        color: #333333;
+    }
+    .am-list-brief{
+        font-size: 13px;
+        color: #a2a2a2;
     }
 
-    .am-grid-icon{
-        display: none;
-    }
-
-    .am-grid-text{
-        margin-top: 0;
-    }
-
-    .input-hot{
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
+    .am-list-thumb {
+        height: 50px;
+        width: 50px;
+        border-radius: 4px; 
+        background: #f1f1f1;
+        img{
+            width: 100%;
+            height: 100%;
+            border-radius: 4px;
+        }
     }
 }

@@ -9,8 +9,9 @@ import './index.scss';
 const STATE = ['chat', 'game'];
 
 const DATA = ['闲', '和', '庄', '闲对', '庄对', '双对', '三宝'].map(t => ({text: t}));
+const COLORS = {'闲': '#008fe0', '和': '#29ab91', '庄': '#f15a4a', '闲对': '#008fe0', '庄对': '#f15a4a', '双对': '#fc992c', '三宝': '#3bb1f3'};
+
 const colors = (item) => {
-  const COLORS = {'闲': '#008fe0', '和': '#29ab91', '庄': '#f15a4a', '闲对': '#008fe0', '庄对': '#f15a4a', '双对': '#fc992c', '三宝': '#3bb1f3'};
   return COLORS[item] || 'black';
 }
 
@@ -55,7 +56,7 @@ export default class Message extends React.Component {
           <Link to="/players/888"><Img type="qunliao_s" /></Link>
         ]}
       ><span>大厅名字(12人)</span></NavBar>
-      <div className="message" id="game">
+      <div className="game" id="game">
       {
           this.state.st == 'chat' ? <InputItem
           className="input"

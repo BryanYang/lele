@@ -1,25 +1,43 @@
 import React from 'react';
 
-import { List, NavBar } from 'antd-mobile';
+import { List, NavBar, Toast } from 'antd-mobile';
 import { Link } from 'react-router-dom';
+import axios from 'axios';
 import './index.scss';
 
-const data = [
-  {img: '', link: '/game'},
-  {img: '', link: '/game'},
-  {img: '', link: '/game'},
-]
-
 export default class Hall extends React.PureComponent {
+  constructor(props){
+    super(props);
+    this.state = {
+      data: [],
+    }
+  }
+
+  componentDidMount(){
+    this.loadData();
+  }
+
+  loadData(){
+    axios.get('/app/v1/gameLobby').then(({data: res}) => {
+      if(res.code === 0 && res.data){
+        this.setState({
+          data: res.data.gameLobbyVos
+        })
+      } else {
+        Toast.fail(res.msg, 1);
+      }
+    })
+  }
+
   render(){
     return <div>
       <NavBar
         mode="dark"
       >大厅</NavBar>
       <List className="my-list">
-        {data.map(d => <Link to={d.link}>
+        {this.state.data.map(d => <Link to={'/game/' + d.groupId} key={d.id}>
           <div className="hall-container">
-            <img className="hall-img" alt="" src="https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=1280747493,1814733925&fm=27&gp=0.jpg"/>
+            <img className="hall-img" alt="" src={d.image}/>
           </div>
         </Link>)}
       </List>

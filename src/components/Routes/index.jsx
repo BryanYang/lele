@@ -7,6 +7,7 @@ import Game from '@pages/Hall/game';
 import Players from '@pages/Hall/players';
 import Service from '@pages/Hall/service';
 import Table from '@pages/Hall/table';
+import Chat from '@pages/Message/chat';
 
 const routes = [
     {
@@ -31,7 +32,7 @@ const routes = [
       path: '/message',
       component: Home,
       title: '消息',
-      needAuth: false,
+      needAuth: true,
     },
     {
       path: '/contacts',
@@ -68,6 +69,12 @@ const routes = [
       component: Table,
       title: '下注表',
       needAuth: false,
+    },
+    {
+      path: '/chat/:id',
+      component: Chat,
+      title: '消息',
+      needAuth: true,
     },
 ];
 export default () => (

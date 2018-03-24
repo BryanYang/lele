@@ -64,7 +64,7 @@ export default class Home extends Component {
             }}
             data-seed="logId"
           >
-            <Explore /> 
+            <Explore {...this.props} /> 
           </TabBar.Item>
           <TabBar.Item
             icon={<Img type="dating"/>}
@@ -77,7 +77,7 @@ export default class Home extends Component {
             }}
             data-seed="logId1"
           >
-            <Hall /> 
+            <Hall {...this.props} /> 
           </TabBar.Item>
           <TabBar.Item
             icon={<Img type="message" />}
@@ -90,7 +90,7 @@ export default class Home extends Component {
               this.props.history.push('/message')
             }}
           >
-            <Message />
+            <Message {...this.props} />
           </TabBar.Item>
           <TabBar.Item
             icon={<Img type="tongxunlu"/>}

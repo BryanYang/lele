@@ -90,6 +90,10 @@ module.exports = {
       '@components': path.join(__dirname, '../src/components'),
       '@pages': path.join(__dirname, '../src/pages'),
       '@assets': path.join(__dirname, '../src/assets'),
+      '@apis': path.join(__dirname, '../src/apis'),
+      '@db': path.join(__dirname, '../src/db'),
+      '@WebIM': path.join(__dirname, '../src/easemob/webIM'),
+      '@stores': path.join(__dirname, '../src/stores'),
     },
     plugins: [
       // Prevents users from importing files from outside of src/ (or node_modules/).
