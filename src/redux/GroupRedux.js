@@ -1,12 +1,12 @@
 import { createReducer, createActions } from "reduxsauce"
 import Immutable from "seamless-immutable"
-import WebIM from "@/config/WebIM"
+import WebIM from "@easemob/WebIM"
 import { history } from "@/utils"
-import GroupMemberActions from "@/redux/GroupMemberRedux"
-import CommonActions from "@/redux/CommonRedux"
+import GroupMemberActions from "@redux/GroupMemberRedux"
+import CommonActions from "@redux/CommonRedux"
 import _ from "lodash"
 import { config } from "@/config"
-import { store } from "@/redux"
+// import { store } from "@redux"
 
 const logger = WebIM.loglevel.getLogger("GroupRedux")
 
@@ -29,7 +29,7 @@ const { Types, Creators } = createActions({
     },
     getGroups: () => {
         return (dispatch, getState) => {
-            store.dispatch(CommonActions.getGroupAlready())
+            // store.dispatch(CommonActions.getGroupAlready())
             WebIM.conn.getGroup({
                 success: function(response) {
                     logger.info(response.data)

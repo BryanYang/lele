@@ -1,8 +1,7 @@
 import { createReducer, createActions } from "reduxsauce"
 import Immutable from "seamless-immutable"
 import _ from "lodash"
-import WebIM from "@/config/WebIM"
-import { store } from "@/redux"
+import WebIM from "@easemob/WebIM"
 import AppDB from "@/utils/AppDB"
 
 // roomType true-chatroom | false-group
@@ -469,7 +468,7 @@ export const INITIAL_STATE = Immutable({
 export const addMessage = (state, { message, bodyType = "txt" }) => {
     console.log("redux addMessage", message)
     !message.status && (message = parseFromServer(message, bodyType))
-    const rootState = store.getState()
+    const rootState = require('@redux/index').getState();
     const username = _.get(rootState, "login.username", "")
     const { id, to, status } = message
     let { type } = message

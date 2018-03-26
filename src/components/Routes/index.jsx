@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { Switch, HashRouter as Router, Redirect } from 'react-router-dom'
+import { Switch, HashRouter as Router, Redirect, withRouter } from 'react-router-dom'
+import { connect } from "react-redux"
 import RouteWithSubRoutes from '../RouteWithSubRoutes/';
 import Home from '@pages/Home/index';
 import Article from '@pages/Explore/article';
@@ -8,6 +9,8 @@ import Players from '@pages/Hall/players';
 import Service from '@pages/Hall/service';
 import Table from '@pages/Hall/table';
 import Chat from '@pages/Message/chat';
+import utils from '@/utils';
+import LoginActions from "@/redux/LoginRedux"
 
 const routes = [
     {
@@ -76,12 +79,46 @@ const routes = [
       title: '消息',
       needAuth: true,
     },
-];
-export default () => (
-  <Router>
-    <Switch>
-      {routes.map((route, i) => <RouteWithSubRoutes key={i} {...route} />)}
-      <Redirect from="/" to="/explore" />
-    </Switch>
-  </Router>
-  )
+]; 
+
+class App extends React.Component {
+  constructor() {
+    super()
+    this.state = {
+        hasToken: utils.hasToken() && utils.getUserName()
+    }
+  }
+
+  componentDidMount(){
+      // 1. check user auth by cookie
+      const { hasToken } = this.state
+      const { loginByToken } = this.props
+      console.log(utils.hasToken())
+      if (hasToken) {
+        console.log(222)
+          loginByToken(utils.getUserName(), utils.getToken())
+      }
+  }
+
+  render(){
+    return <Router>
+      <Switch>
+        {routes.map((route, i) => <RouteWithSubRoutes key={i} {...route} />)}
+        <Redirect from="/" to="/explore" />
+      </Switch>
+    </Router>
+  }
+}
+
+export default 
+  connect(
+      ({ breakpoint, login }) => ({
+          breakpoint,
+          token: login.token,
+          isLogin: login.isLogin,
+          isLoading: login.fetching
+      }),
+      dispatch => ({
+          loginByToken: (username, token) => dispatch(LoginActions.loginByToken(username, token))
+      })
+  )(App)

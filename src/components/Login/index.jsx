@@ -1,11 +1,12 @@
 import React from 'react';
 import { InputItem, NavBar, Icon, Button, Toast} from 'antd-mobile';
 import { createForm } from 'rc-form';
+import { connect } from "react-redux"
 import axios from 'axios';
 import qs from 'qs';
 import Cookies from 'js-cookie';
+import LoginActions from "@/redux/LoginRedux"
 
-import db from '@db/index';
 import './index.scss';
 
 const userController = require('@apis/controller')('user');
@@ -25,12 +26,12 @@ class Login extends React.PureComponent {
         axios.post('/app/v1/user/login', qs.stringify(value)).then(({data: res}) => {
           if(res.code === 0 && res.data && res.data.userVo){
             Cookies.set('token', res.data.userVo.token, { expires: 7 });
-            // 拉取好友
-            Promise.all([
-              userController('friendList').then(res => db.set('friendList', res.data.userVo).write()),
-              userController('myprofile').then(res => db.set('user', res.data.userVo).write())
-            ]).then(() => {
-              window.location.reload();
+            // 登录成功后，登录环信
+            userController('myprofile').then(({ data }) => {
+              // this.props.doLogin(data.userVo.imusername, data.userVo.impassword)
+              // Cookies.set('imusername', data.userVo.imusername, { expires: 7 }); 
+              Cookies.set('imusername', 'mengyuanyuan', { expires: 7 });  
+              this.props.doLogin('mengyuanyuan', '123456') 
             })
           } else {
             Toast.info(res.msg);
@@ -73,4 +74,16 @@ class Login extends React.PureComponent {
   }
 }
 
-export default createForm()(Login);
+export default connect(
+  ({ login, i18n }) => ({
+      I18N: (i18n.locale && i18n.translations && i18n.translations[i18n.locale]) || {},
+      login: {
+          loginLoading: false
+      }
+  }),
+  dispatch => ({
+      doLogin: (username, password) => dispatch(LoginActions.login(username, password)),
+      doLoginByToken: (username, token) => dispatch(LoginActions.loginByToken(username, token)),
+      jumpRegister: () => dispatch(LoginActions.jumpRegister())
+  })
+)(createForm()(Login));

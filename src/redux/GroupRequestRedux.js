@@ -2,7 +2,7 @@
 
 import { createReducer, createActions } from "reduxsauce"
 import Immutable from "seamless-immutable"
-import WebIM from "@/config/WebIM"
+import WebIM from "@easemob/WebIM"
 
 /* ------------- Types and Action Creators ------------- */
 

@@ -1,7 +1,7 @@
 import { createReducer, createActions } from "reduxsauce"
 import Immutable from "seamless-immutable"
 import _ from "lodash"
-import { parseFromServer } from "@/redux/MessageRedux"
+import { parseFromServer } from "@redux/MessageRedux"
 
 /* ------------- Types and Action Creators ------------- */
 

@@ -3,15 +3,22 @@ import { TabBar, NavBar, Icon } from 'antd-mobile';
 import Message from '@pages/Message/index';
 import Explore from '@pages/Explore/index';
 import Hall from '@pages/Hall/index';
-
+import { withRouter, Route } from "react-router-dom"
+import { connect } from "react-redux"
 import { Img } from '@components/Icon';
+
+import ChatRoomActions from "@/redux/ChatRoomRedux"
+
+import GroupActions from "@/redux/GroupRedux"
+import GroupMemberActions from "@/redux/GroupMemberRedux"
+import MessageActions from "@/redux/MessageRedux"
 
 import 'antd-mobile/lib/tab-bar/style/index.css';
 import 'antd-mobile/lib/nav-bar/style/index.css';
 import './index.scss';
 
 
-export default class Home extends Component {
+class Home extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -121,3 +128,26 @@ export default class Home extends Component {
     );
   }
 }
+
+export default withRouter(
+  connect(
+      ({ breakpoint, entities, login, common }) => ({
+          breakpoint,
+          login,
+          common,
+      }),
+      dispatch => ({
+          getGroupMember: id => dispatch(GroupMemberActions.getGroupMember(id)),
+          listGroupMemberAsync: opt => dispatch(GroupMemberActions.listGroupMemberAsync(opt)),
+          switchRightSider: ({ rightSiderOffset }) => dispatch(GroupActions.switchRightSider({ rightSiderOffset })),
+          joinChatRoom: roomId => dispatch(ChatRoomActions.joinChatRoom(roomId)),
+          quitChatRoom: roomId => dispatch(ChatRoomActions.quitChatRoom(roomId)),
+          clearUnread: (chatType, id) => dispatch(MessageActions.clearUnread(chatType, id)),
+          getGroups: () => dispatch(GroupActions.getGroups()),
+          getChatRooms: () => dispatch(ChatRoomActions.getChatRooms()),
+          getMutedAsync: groupId => dispatch(GroupMemberActions.getMutedAsync(groupId)),
+          getGroupAdminAsync: groupId => dispatch(GroupMemberActions.getGroupAdminAsync(groupId)),
+          fetchMessage: (id, chatType, offset) => dispatch(MessageActions.fetchMessage(id, chatType, offset))
+      })
+  )(Home)
+)

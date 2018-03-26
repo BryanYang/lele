@@ -1,18 +1,18 @@
 import { createStore, applyMiddleware, compose, combineReducers } from "redux"
-import { config } from "@/config"
+import config from "@/config/index"
 import { forEach } from "lodash"
 import thunkMiddleware from "redux-thunk"
 import { routerReducer, routerMiddleware } from "react-router-redux"
 import { loadTranslations, setLocale, syncTranslationWithStore, i18nReducer } from "react-redux-i18n"
 import { translationsObject } from "@/config/i18n/index.js"
-import WebIMConfig from "WebIMConfig"
-import { history } from "@/utils"
+import WebIMConfig from "@easemob/config"
+import { history } from "@/utils";
 
 // todo media query pollyfill
 import { breakpointReducer, combinedReducer, MATCH_MEDIA } from "./IndexRedux"
 
-/* ------------- Redux Dev Tools ------------- */
 
+/* ------------- Redux Dev Tools ------------- */
 const composeEnhancers =
     typeof window === "object" && window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__
         ? window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__({})
@@ -35,6 +35,7 @@ const initState = {
     login: {},
     im: {}
 }
+
 const rootReducer = combineReducers({
     breakpoint: breakpointReducer,
     entities: combineReducers({

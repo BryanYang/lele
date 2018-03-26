@@ -2,11 +2,11 @@
 
 import { createReducer, createActions } from "reduxsauce"
 import Immutable from "seamless-immutable"
-import { api } from "@/config/WebIM"
+import { api } from "@easemob/WebIM"
 import Cookie from "js-cookie"
-import { message } from "antd"
+import  { Toast } from 'antd-mobile'
 import { history } from "@/utils"
-import { store } from "@/redux"
+import { store } from "@redux"
 /* ------------- Types and Action Creators ------------- */
 
 const { Types, Creators } = createActions({
@@ -59,7 +59,7 @@ export const registerRequest = (state = INITIAL_STATE,
 
 export const registerSuccess = (state = INITIAL_STATE, { username }) => {
     let I18N = store.getState().i18n.translations[store.getState().i18n.locale]
-    message.success(username + ", " + I18N.signUpSuccessfully)
+    Toast.info(username + ", " + I18N.signUpSuccessfully)
     history.push("/login")
     return Immutable.merge(state, { fetching: false, registerError: null })
 }

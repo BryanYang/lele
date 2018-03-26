@@ -1,10 +1,10 @@
 import { createReducer, createActions } from "reduxsauce"
 import Immutable from "seamless-immutable"
 import _ from "lodash"
-import WebIM from "@/config/WebIM"
+import WebIM from "@easemob/WebIM"
 import { I18n } from "react-redux-i18n"
 
-import CommonActions from "@/redux/CommonRedux"
+import CommonActions from "@redux/CommonRedux"
 
 /* ------------- Types and Action Creators ------------- */
 const { Types, Creators } = createActions({
@@ -17,13 +17,16 @@ const { Types, Creators } = createActions({
     getContacts: () => {
         return (dispatch, getState) => {
             dispatch(CommonActions.fetching())
+            console.log('开始获取联系人')
             WebIM.conn.getRoster({
                 success: roster => {
+                    console.log('getRoster success:' + roster)
                     dispatch(Creators.updateRoster(roster))
                     dispatch(CommonActions.fetched())
                 },
                 error: error => {
                     //TODO ERROR
+                    console.log(error)
                     dispatch(CommonActions.fetched())
                 }
             })

@@ -1,9 +1,9 @@
 import { createReducer, createActions } from "reduxsauce"
 import Immutable from "seamless-immutable"
 import _ from "lodash"
-import { WebIM } from "@/config"
+import WebIM from "@easemob/WebIM"
 import { history } from "@/utils"
-import GroupActions from "@/redux/GroupRedux"
+import GroupActions from "@redux/GroupRedux"
 
 /* ------------- Types and Action Creators ------------- */
 
@@ -261,7 +261,7 @@ export const operateAdmin = (state, { groupId, admin, operation }) => {
  * @returns 
  */
 export const setMuted = (state, { groupId, muted }) => {
-    const byName = _.chain(muted)
+    const byName = muted
         .reduce((acc, val) => {
             acc[val.user] = val
             return acc

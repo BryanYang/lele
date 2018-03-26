@@ -1,9 +1,8 @@
 import { createReducer, createActions } from "reduxsauce"
 import Immutable from "seamless-immutable"
 import _ from "lodash"
-import { WebIM } from "@/config"
-import { store } from "@/redux"
-import CommonActions from "@/redux/CommonRedux"
+import WebIM from "@easemob/WebIM"
+import CommonActions from "@redux/CommonRedux"
 /* ------------- Types and Action Creators ------------- */
 
 const { Types, Creators } = createActions({
@@ -12,7 +11,7 @@ const { Types, Creators } = createActions({
     // ---------------async------------------
     getChatRooms: () => {
         return (dispatch, getState) => {
-            store.dispatch(CommonActions.getChatRoomAlready())
+            // store.dispatch(CommonActions.getChatRoomAlready())
             // console.log('getChatRooms', getState())
             let pagenum = 1
             let pagesize = 10

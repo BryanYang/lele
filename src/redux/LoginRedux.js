@@ -2,12 +2,10 @@
 
 import { createReducer, createActions } from "reduxsauce"
 import Immutable from "seamless-immutable"
-import WebIM from "@/config/WebIM"
+import WebIM from "@easemob/WebIM"
 import Cookie from "js-cookie"
-import { message } from "antd"
 import { history } from "@/utils"
-import { store } from "@/redux"
-
+import { Toast } from "antd-mobile"
 
 /* ------------- Types and Action Creators ------------- */
 
@@ -36,9 +34,7 @@ const { Types, Creators } = createActions({
                 //  accessToken: password,
                 appKey: WebIM.config.appkey,
                 success(token) {
-                    let I18N = store.getState().i18n.translations[store.getState().i18n.locale]
-                    message.success(I18N.loginSuccessfully, 1)
-
+                    Toast.info( '登录成功', 1)
                     dispatch(Creators.setLoginToken(username, token.access_token))
                     dispatch(Creators.setLoginSuccess(username))
                 },
@@ -50,6 +46,7 @@ const { Types, Creators } = createActions({
     },
     loginByToken: (username, token) => {
         return (dispatch, getState) => {
+            console.log('loginByToken')
             dispatch(Creators.setLoging(username, null, token))
 
             if (WebIM.conn.isOpened()) {
@@ -89,7 +86,6 @@ export const INITIAL_STATE = Immutable({
 
 /* ------------- Reducers ------------- */
 export const setLoginToken = (state = INITIAL_STATE, { username, token }) => {
-    console.log("setLoginToken")
     Cookie.set("web_im_" + username, token)
     return Immutable.merge(state, {
         username: username,

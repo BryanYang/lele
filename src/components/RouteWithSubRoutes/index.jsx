@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Route } from 'react-router-dom';
 import Login from '@components/Login/index';
-import {isLogin} from '../../utils';
+import {isLogin} from '@/utils/index';
  
 const RouteWithSubRoutes = route => (
   <Route

@@ -1,34 +1,39 @@
 import { createReducer, createActions } from "reduxsauce"
 import Immutable from "seamless-immutable"
 import _ from "lodash"
-import WebIM from "@/config/WebIM"
-import CommonActions from "@/redux/CommonRedux"
-import RosterActions from "@/redux/RosterRedux"
-import LoginActions from "@/redux/LoginRedux"
-import GroupActions from "@/redux/GroupRedux"
-import ChatRoomActions from "@/redux/ChatRoomRedux"
-import StrangerActions from "@/redux/StrangerRedux"
-import SubscribeActions from "@/redux/SubscribeRedux"
-import BlacklistActions from "@/redux/BlacklistRedux"
-import MessageActions from "@/redux/MessageRedux"
-import GroupRequestActions from "@/redux/GroupRequestRedux"
-import { store } from "@/redux"
+import WebIM from "@easemob/WebIM"
+import CommonActions from "@redux/CommonRedux"
+import RosterActions from "@redux/RosterRedux"
+import LoginActions from "@redux/LoginRedux"
+import GroupActions from "@redux/GroupRedux"
+import ChatRoomActions from "@redux/ChatRoomRedux"
+import StrangerActions from "@redux/StrangerRedux"
+import SubscribeActions from "@redux/SubscribeRedux"
+import BlacklistActions from "@redux/BlacklistRedux"
+import MessageActions from "@redux/MessageRedux"
+import GroupRequestActions from "@redux/GroupRequestRedux"
+import { store } from "@redux"
 import { history } from "@/utils"
 import utils from "@/utils"
 import AppDB from "@/utils/AppDB"
 import { I18n } from "react-redux-i18n"
+import { Toast } from "antd-mobile"
 
-import { message } from "antd"
+const message = {
+    success: Toast.success,
+    error: Toast.fail,
+    warning: Toast.info,
+}
 
 const logger = WebIM.loglevel.getLogger("WebIMRedux")
-
+console.log('初始化 web im redux')
 WebIM.conn.listen({
     // success connect to xmpp
     onOpened: msg => {
+        console.log('open')
         const username = store.getState().login.username
         const token = utils.getToken()
         const hash = utils.getHash()
-        console.log(history)
         // TODO all path could visited by anonymous should be declared directly
         const path = history.location.pathname.indexOf("login") !== -1 ? "/contact" : history.location.pathname
         const redirectUrl = `${path}?username=${username}`
@@ -43,6 +48,7 @@ WebIM.conn.listen({
         WebIM.conn.setPresence()
     
         // get roster
+
         store.dispatch(RosterActions.getContacts())
         
         // dispatch login success callback
