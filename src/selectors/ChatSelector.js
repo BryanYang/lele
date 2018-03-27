@@ -2,7 +2,7 @@ import { createSelector } from "reselect"
 import _ from "lodash"
 
 const chatType = {
-    message: "chat",
+    chat: "chat",
     group: "groupchat",
     chatroom: "chatroom",
     stranger: "stranger"
@@ -10,7 +10,6 @@ const chatType = {
 
 const getTabMessageArray = (state, props) => {
     const [ blank, selectTab, selectItem] = props.match.url.split('/');
-    console.log(state)
     return _.get(state, [ "entities", "message", chatType[selectTab], selectItem ])
 }
 

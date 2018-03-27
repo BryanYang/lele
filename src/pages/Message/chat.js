@@ -8,12 +8,16 @@ import ChatEmoji from "@components/chat/ChatEmoji"
 import getTabMessages from "@/selectors/ChatSelector"
 import MessageActions from "@/redux/MessageRedux"
 import WebIM from '@easemob/WebIM';
+import config from '@easemob/config'
+import _ from 'lodash';
+import ChatMessage from "@/components/chat/ChatMessage"
 import './index.scss';
 import "./style.less"
 
 const Item = List.Item;
 const Brief = Item.Brief;
 
+const { PAGE_NUM } = config
 class Chat extends React.Component {
   constructor(props){
     super(props);
@@ -23,12 +27,14 @@ class Chat extends React.Component {
       isLoaded: false
     }
     this.person = this.props.match.url.split('/')[2];
-    console.log(this.props);
+
     this.handleSend = this.handleSend.bind(this)
     this.handleChange = this.handleChange.bind(this)
     this.handleEmojiSelect = this.handleEmojiSelect.bind(this)
     this.handleEmojiCancel = this.handleEmojiCancel.bind(this)
     this.handleKey = this.handleKey.bind(this)
+    this.handleScroll = this.handleScroll.bind(this)
+    this.onClearMessage = this.onClearMessage.bind(this)
 
     this.logger = WebIM.loglevel.getLogger("chat component")
   }
@@ -52,12 +58,7 @@ class Chat extends React.Component {
 
   handleSend(e) {
     // console.log(this.state.value)
-    const {
-        match,
-        message
-        // form: { getFieldDecorator, validateFieldsAndScroll }
-    } = this.props
-    const { selectItem, selectTab } = match.params
+
     const { value } = this.state
     if (!value) return
     this.props.sendTxtMessage('chat', this.person, {
@@ -90,11 +91,44 @@ class Chat extends React.Component {
         value: (this.state.value || "") + v.key
     }, () => {
         this.logger.info("callback")
+        console.log(this.state.value)
         this.logger.info(this.state.value)
     })
     this.logger.info("async")
     this.logger.info(this.state.value)
     this.input.focus()
+  }
+
+
+  handleScroll = (e) => {
+    const _this = this
+    if (e.target.scrollTop === 0) {
+        // TODO: optimization needed
+      setTimeout(function() {
+        console.log(_this.props.messageList)
+        const offset = _this.props.messageList ? _this.props.messageList.length : 0            
+        const { selectItem, selectTab } = _.get(_this.props, [ "match", "params" ], {})
+        const chatTypes = { "contact": "chat", "group": "groupchat", "chatroom": "chatroom", "stranger": "stranger" }
+        const chatType = chatTypes[selectTab]
+        // load more history message
+        _this.props.fetchMessage(this.person, 'chat', offset, (res) => {
+            // no more history when length less than 20
+            if (res < PAGE_NUM) {
+                _this.setState({
+                    isLoaded: true
+                })
+                _this._not_scroll_bottom = false
+            }
+        })
+        _this._not_scroll_bottom = true
+      }, 500)
+    }
+  }
+
+  onClearMessage = () => {
+    const chatTypes = { "contact": "chat", "group": "groupchat", "chatroom": "chatroom", "stranger": "stranger" }
+    const chatType = chatTypes['contact'];
+    this.props.clearMessage(chatType, this.person)
   }
 
   emitEmpty() {
@@ -115,11 +149,21 @@ class Chat extends React.Component {
 
   render(){
     const { messageList, match } = this.props;
+    console.log('消息列表:')
     console.log(messageList)
     return (<div className="message" id="message">
       <NavBar
         mode="dark"
+        icon={<Icon type="left" />}
+        onLeftClick={() => {
+          this.props.history.goBack()
+        }}
       >{match.params.id}</NavBar>
+    <div className="x-chat-content" ref="x-chat-content" onScroll={this.handleScroll}>
+        {/* fixed bug of messageList.map(...) */}
+        {this.state.isLoaded && <div style={{ width:"150px",height:"30px",lineHeight:"30px",backgroundColor:"#888",color:"#fff",borderRadius:"15px", textAlign:"center", margin:"10px auto" }}>没有消息</div>}
+        {_.map(messageList, message => <ChatMessage key={message.id} {...message} />)}
+    </div>
      <div className="x-chat-footer">
       <div className="x-list-item x-chat-ops">
           {/* emoji */}
@@ -192,5 +236,7 @@ export default connect(
     }),
     dispatch => ({
       sendTxtMessage: (chatType, id, message) => dispatch(MessageActions.sendTxtMessage(chatType, id, message)),
+      clearMessage: (chatType, id) => dispatch(MessageActions.clearMessage(chatType, id)),
+      fetchMessage: (id, chatType, offset, cb) => dispatch(MessageActions.fetchMessage(id, chatType, offset, cb))
     })
 )(Chat)

@@ -3,6 +3,7 @@ import { TabBar, NavBar, Icon } from 'antd-mobile';
 import Message from '@pages/Message/index';
 import Explore from '@pages/Explore/index';
 import Hall from '@pages/Hall/index';
+import My from '@pages/My/index';
 import { withRouter, Route } from "react-router-dom"
 import { connect } from "react-redux"
 import { Img } from '@components/Icon';
@@ -21,9 +22,9 @@ import './index.scss';
 class Home extends Component {
   constructor(props) {
     super(props);
+    console.log(props);
     this.state = {
       selectedTab: props.location.pathname.substr(1) || 'explore',
-      hidden: false,
       fullScreen: false,
     };
   }
@@ -57,7 +58,7 @@ class Home extends Component {
           unselectedTintColor="#949494"
           tintColor="rgb(228, 53, 58)"
           barTintColor="white"
-          hidden={this.state.hidden}
+          hidden={this.props.layout.tabBarHidden}
         >
           <TabBar.Item
             title="发现"
@@ -109,19 +110,19 @@ class Home extends Component {
               this.props.history.push('/contacts')
             }}
           >
-            {this.renderContent('My')}
+            
           </TabBar.Item>
           <TabBar.Item
             icon={<Img type="wo"/>}
             selectedIcon={<Img type="wo_alt"/>}
             title="我的"
             key="my"
-            selected={this.state.selectedTab === 'my'}
+            selected={this.state.selectedTab.indexOf('my') > -1 }
             onPress={() => {
-              this.props.history.push('/my')
+              this.props.history.replace('/my')
             }}
           >
-            {this.renderContent('My')}
+            <My {...this.props}  hiddenTabBar={this.hiddenTabBar} />
           </TabBar.Item>
         </TabBar>
       </div>
@@ -131,10 +132,11 @@ class Home extends Component {
 
 export default withRouter(
   connect(
-      ({ breakpoint, entities, login, common }) => ({
+      ({ breakpoint, entities, login, common, layout }) => ({
           breakpoint,
           login,
           common,
+          layout,
       }),
       dispatch => ({
           getGroupMember: id => dispatch(GroupMemberActions.getGroupMember(id)),

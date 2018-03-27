@@ -9,6 +9,7 @@ import Players from '@pages/Hall/players';
 import Service from '@pages/Hall/service';
 import Table from '@pages/Hall/table';
 import Chat from '@pages/Message/chat';
+import My from '@pages/My/index';
 import utils from '@/utils';
 import LoginActions from "@/redux/LoginRedux"
 
@@ -44,12 +45,6 @@ const routes = [
       needAuth: false,
     },
     {
-      path: '/my',
-      component: Home,
-      title: '个人中心',
-      needAuth: false,
-    },
-    {
       path: '/game',
       component: Game,
       title: '游戏厅',
@@ -77,6 +72,12 @@ const routes = [
       path: '/chat/:id',
       component: Chat,
       title: '消息',
+      needAuth: true,
+    },
+    {
+      path: '/my',
+      component: Home,
+      title: '我的',
       needAuth: true,
     },
 ]; 

@@ -7718,7 +7718,7 @@ react-native-swipeout@^2.2.2:
 
 react-redux-i18n@^1.9.2:
   version "1.9.2"
-  resolved "https://registry.npmjs.org/react-redux-i18n/-/react-redux-i18n-1.9.2.tgz#29d7dd1b708bb922fbf83c7316286ec84af590ce"
+  resolved "https://registry.yarnpkg.com/react-redux-i18n/-/react-redux-i18n-1.9.2.tgz#29d7dd1b708bb922fbf83c7316286ec84af590ce"
   dependencies:
     react-i18nify "^1.11.8"
 

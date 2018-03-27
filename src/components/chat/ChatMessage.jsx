@@ -5,10 +5,10 @@ import moment from "moment"
 import { I18n } from "react-redux-i18n"
 import { Badge } from "antd"
 import { renderTime } from "@/utils"
-import emoji from "@/config/emoji"
+import emoji from "@/easemob/emoji"
 import { Card, Tag } from "antd"
-import Audio from "@/components/chat/Audio"
-import WebIM from "@/config/WebIM"
+// import Audio from "@/components/chat/Audio"
+import WebIM from "@/easemob/WebIM"
 
 const renderTxt = txt => {
     let rnTxt = []
@@ -24,12 +24,12 @@ const renderTxt = txt => {
         if (match[1] in emoji.map) {
             const v = emoji.map[match[1]]
             rnTxt.push(
-                <img
-                    key={WebIM.conn.getUniqueId()}
-                    src={require(`../../themes/faces/${v}`)}
-                    width={20}
-                    height={20}
-                />
+            <img
+            key={WebIM.conn.getUniqueId()}
+            src={require(`../../themes/faces/${v}`)}
+            width={20}
+            height={20}
+            />
             )
         } else {
             rnTxt.push(match[1])
@@ -105,7 +105,7 @@ export default ({ bySelf, from, time, body, status }) => {
     } else if (body.type == "audio") {
         content = (
             <div className="x-message-audio">
-                <Audio url={body.url} length={body.length} />
+            
             </div>
         )
     }

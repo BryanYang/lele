@@ -26,7 +26,7 @@ class ChatEmoji extends React.Component {
      const height = (emojiWidth + 2 * emojiPadding) * rows
 
      return (
-         <Menu className="x-emoji" style={{ width, height }} {...this.props}>
+         <Menu className="x-emoji" style={{ width, height }} {...this.props} onClick={this.props.onSelect}>
              {this.renderEmoji()}
              {/*
 				<Menu.Item key="3" style={{ display: "block" }} disabled>
