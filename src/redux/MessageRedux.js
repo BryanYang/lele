@@ -467,8 +467,9 @@ export const INITIAL_STATE = Immutable({
  */
 export const addMessage = (state, { message, bodyType = "txt" }) => {
     console.log("redux addMessage", message)
+    console.log(require('@/redux/index'))
     !message.status && (message = parseFromServer(message, bodyType))
-    const rootState = require('@redux/index').getState();
+    const rootState = require('@redux/index').store.getState();
     const username = _.get(rootState, "login.username", "")
     const { id, to, status } = message
     let { type } = message

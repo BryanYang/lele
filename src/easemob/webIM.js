@@ -1,7 +1,7 @@
 /* eslint-disable */
 import "script-loader!easemob-websdk/dist/strophe-1.2.8.js"
 /* eslint-enable */
-import websdk from "easemob-websdk"
+import WebIM from "easemob-websdk"
 import config from "./config"
 import emoji from "./emoji"
 import Api from "axios"
@@ -11,11 +11,12 @@ import code from './status';
 
 
 console = console || {}
+
 console.group = console.group || function () {}
 console.groupEnd = console.groupEnd || function () {}
 
 // init DOMParser / document for strophe and sdk
-let WebIM = window.WebIM || {}
+
 WebIM.statusCode= code;
 WebIM.config = config || {};
 
@@ -23,7 +24,7 @@ WebIM.loglevel = loglevel
 // replace all console.log with loglevel.info
 // console.log = loglevel.info
 
-WebIM.conn = new websdk.connection({
+WebIM.conn = new WebIM.connection({
     isMultiLoginSessions: WebIM.config.isMultiLoginSessions,
     https: WebIM.config.https,
     url: WebIM.config.xmppURL,
