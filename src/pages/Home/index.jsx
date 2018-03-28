@@ -4,6 +4,7 @@ import Message from '@pages/Message/index';
 import Explore from '@pages/Explore/index';
 import Hall from '@pages/Hall/index';
 import My from '@pages/My/index';
+import Contact from '@pages/Contact/index';
 import { withRouter, Route } from "react-router-dom"
 import { connect } from "react-redux"
 import { Img } from '@components/Icon';
@@ -110,7 +111,7 @@ class Home extends Component {
               this.props.history.push('/contacts')
             }}
           >
-            
+            <Contact />
           </TabBar.Item>
           <TabBar.Item
             icon={<Img type="wo"/>}

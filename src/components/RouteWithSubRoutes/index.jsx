@@ -1,6 +1,5 @@
 import * as React from 'react';
-import { Route } from 'react-router-dom';
-import Login from '@components/Login/index';
+import { Route,  Redirect} from 'react-router-dom';
 import {isLogin} from '@/utils/index';
  
 const RouteWithSubRoutes = route => (
@@ -12,7 +11,7 @@ const RouteWithSubRoutes = route => (
       return (<div id="main">
         {
           route.needAuth && !isLogin()
-            ? <Login {...props}/>
+            ? <Redirect to="/login" />
             : <route.component {...props} routes={route.routes} />
         }
       </div>)

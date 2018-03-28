@@ -9,7 +9,8 @@ import Players from '@pages/Hall/players';
 import Service from '@pages/Hall/service';
 import Table from '@pages/Hall/table';
 import Chat from '@pages/Message/chat';
-import My from '@pages/My/index';
+import Register from '@components/Login/register'
+import Login from '@components/Login/index'
 import utils from '@/utils';
 import LoginActions from "@/redux/LoginRedux"
 
@@ -79,6 +80,18 @@ const routes = [
       component: Home,
       title: '我的',
       needAuth: true,
+    },
+    {
+      path: '/register',
+      component: Register,
+      title: '注册',
+      needAuth: false,
+    },
+    {
+      path: '/login',
+      component: Login,
+      title: '登录',
+      needAuth: false,
     },
 ]; 
 

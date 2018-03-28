@@ -5,6 +5,7 @@ import { connect } from "react-redux"
 import axios from 'axios';
 import qs from 'qs';
 import Cookies from 'js-cookie';
+import { Link } from 'react-router-dom';
 import LoginActions from "@/redux/LoginRedux"
 
 import './index.scss';
@@ -49,8 +50,11 @@ class Login extends React.PureComponent {
           mode="dark"
           icon={<Icon type="left" />}
           onLeftClick={() => {
-            this.props.history.goBack()
+            this.props.history.replace('/');
           }}
+          rightContent={[
+            <Link key="reg" to="/register"><span style={{color: '#fff'}}>注册</span></Link>,
+          ]}
       >登录</NavBar>
       <form id="register">
         <InputItem
@@ -84,6 +88,5 @@ export default connect(
   dispatch => ({
       doLogin: (username, password) => dispatch(LoginActions.login(username, password)),
       doLoginByToken: (username, token) => dispatch(LoginActions.loginByToken(username, token)),
-      jumpRegister: () => dispatch(LoginActions.jumpRegister())
   })
 )(createForm()(Login));
