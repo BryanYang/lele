@@ -5,6 +5,7 @@ import { Switch, Route, Link } from 'react-router-dom';
 import MessageActions from "@/redux/MessageRedux"
 import './index.scss';
 import Apply from './apply';
+import Add from './add';
 
 import ContactsScreenRedux from "@/redux/ContactsScreenRedux";
 
@@ -23,8 +24,7 @@ class ContactIndex extends React.Component {
   }
 
   render() {
-    console.log(this.props);
-    const {applyList, myContacts} = this.props.contacts;
+    const {applyList =[], myContacts = []} = this.props.contacts;
     return (
       <div>
         <SearchBar placeholder="Search" />
@@ -84,6 +84,7 @@ const Contact = (props) => {
   return (
     <Switch>
       <Route path="/contacts/apply" component={Apply} />
+      <Route path="/contacts/add" component={Add} />
       <Route path="/contacts/" component={ContactIndexWrap} />
     </Switch>
   )

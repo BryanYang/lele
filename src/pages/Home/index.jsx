@@ -106,7 +106,7 @@ class Home extends Component {
             selectedIcon={<Img type="tongxunlu_alt"/>}
             title="通讯录"
             key="contacts"
-            selected={this.state.selectedTab === 'contacts'}
+            selected={this.state.selectedTab.indexOf('contacts') > -1 }
             onPress={() => {
               this.props.history.push('/contacts')
             }}

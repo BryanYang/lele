@@ -1,12 +1,5 @@
 #message{
     width: 100%;
-    .am-popover-content{
-        background: gray;
-    
-    }
-    .am-popover-inner{
-        background: gray;
-    }
     .am-list-content{
         font-size: 14px;
         color: #333333;
@@ -51,4 +44,20 @@
         height: 20px;
         background-size: contain;
     }
+}
+
+
+.am-popover-inner-wrapper {
+    background: gray; 
+    color: #fff;
+}
+.am-popover-item-icon {
+    img{
+        height: 20px;
+        vertical-align:baseline;
+    }
+}
+
+.am-popover-arrow{
+    background: gray;
 }

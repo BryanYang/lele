@@ -143,27 +143,8 @@ module.exports = {
         oneOf: [
           // "url" loader works just like "file" loader but it also embeds
           // assets smaller than specified size as data URLs to avoid requests.
-          {
-            test: [/\.bmp$/, /\.gif$/, /\.jpe?g$/, /\.png$/],
-            loader: require.resolve('url-loader'),
-            options: {
-              limit: 10000,
-              name: 'static/media/[name].[hash:8].[ext]',
-            },
-          },
-          {
-            test: /\.svg$/,
-            use: [
-              {
-                loader: 'babel-loader',
-              },
-              { loader: 'svg-sprite-loader', options: {
-                runtimeGenerator: require.resolve('./svg-to-icon-component-runtime-generator'),
-                runtimeOptions: {
-                  iconModule: './src/components/Icon/index.jsx' // Relative to current build context folder
-                } 
-              } },
-            ]
+          { test: /\.(svg|png|jpg)$/,
+            loader: 'url-loader?limit=30000&name=[name]-[hash].[ext]'
           },
           // Process JS with Babel.
           {
@@ -217,6 +198,27 @@ module.exports = {
             ),
             // Note: this won't work without `new ExtractTextPlugin()` in `plugins`.
           },
+          {
+            test: /\.less$/,
+            loader: ExtractTextPlugin.extract(
+              {
+                use: [
+                  {
+                      loader: require.resolve("css-loader")
+                  },
+                  {
+                      loader: require.resolve("less-loader"),
+                  }
+                ],
+                fallback: {
+                  loader: require.resolve('style-loader'),
+                  options: {
+                    hmr: false,
+                  },
+                },
+              }),
+          },
+         
           // "file" loader makes sure assets end up in the `build` folder.
           // When you `import` an asset, you get its filename.
           // This loader doesn't use a "test" so it will catch all modules

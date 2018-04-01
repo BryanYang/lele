@@ -12,15 +12,21 @@ const { Types, Creators } = createActions({
   passApply: ['id'],
   queryContacts: () => {
     return (dispatch, getState) => {
-      userController("friendList").then(({data}) => {
-        dispatch(Creators.setContacts(data.userVos)) 
+      userController("friendList").then((res) => {
+        if(res.code !== 0){
+          Toast.info(res.msg);
+        } else {
+          dispatch(Creators.setContacts(res.data.userVos)) 
+        }
       });
     };
   },
   queryApply: () => {
     return (dispatch, getState) => {
-      userController("applyAddFriendList").then(({data}) => {
-        dispatch(Creators.setApplyList(data.userFirendApplyVos)) 
+      userController("applyAddFriendList").then((res) => {
+        if(res.code !== 0) {
+          Toast.info(res.msg); 
+        } else dispatch(Creators.setApplyList(res.data.userFirendApplyVos)) 
       });
     };
   },
