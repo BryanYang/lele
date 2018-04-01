@@ -1,0 +1,26 @@
+.am-tab-bar-item {
+    background: #f9f9f9;
+}
+
+.am-list-item {
+  padding-left: 10px;
+  height: 50px;
+  img {
+    width: 34px;
+    height: 34px;
+  }
+  .am-list-thumb {
+    margin-right: 10px;
+  }
+}
+
+#apply {
+    .am-button-primary {
+        background-color: #e63333;
+        color: white;
+    }
+    .am-list-brief{
+        font-size: 12px;
+        margin: 0;
+    }
+}

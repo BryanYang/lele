@@ -2,6 +2,7 @@ import React from 'react';
 import { Icon, NavBar, InputItem, List } from 'antd-mobile';
 import { Input } from 'antd'; 
 import fetch from '../../fetch';
+import qs from 'query-string';
 import { withRouter } from "react-router-dom"
 import { connect } from "react-redux"
 import ChatEmoji from "@components/chat/ChatEmoji"
@@ -91,7 +92,6 @@ class Chat extends React.Component {
         value: (this.state.value || "") + v.key
     }, () => {
         this.logger.info("callback")
-        console.log(this.state.value)
         this.logger.info(this.state.value)
     })
     this.logger.info("async")
@@ -105,7 +105,6 @@ class Chat extends React.Component {
     if (e.target.scrollTop === 0) {
         // TODO: optimization needed
       setTimeout(function() {
-        console.log(_this.props.messageList)
         const offset = _this.props.messageList ? _this.props.messageList.length : 0            
         const { selectItem, selectTab } = _.get(_this.props, [ "match", "params" ], {})
         const chatTypes = { "contact": "chat", "group": "groupchat", "chatroom": "chatroom", "stranger": "stranger" }
@@ -149,8 +148,7 @@ class Chat extends React.Component {
 
   render(){
     const { messageList, match } = this.props;
-    console.log('消息列表:')
-    console.log(messageList)
+    const queryStrings = qs.parse(this.props.location.search);
     return (<div className="message" id="message">
       <NavBar
         mode="dark"
@@ -158,7 +156,7 @@ class Chat extends React.Component {
         onLeftClick={() => {
           this.props.history.goBack()
         }}
-      >{match.params.id}</NavBar>
+      >{queryStrings.name}</NavBar>
     <div className="x-chat-content" ref="x-chat-content" onScroll={this.handleScroll}>
         {/* fixed bug of messageList.map(...) */}
         {this.state.isLoaded && <div style={{ width:"150px",height:"30px",lineHeight:"30px",backgroundColor:"#888",color:"#fff",borderRadius:"15px", textAlign:"center", margin:"10px auto" }}>没有消息</div>}
@@ -232,7 +230,7 @@ export default connect(
         common: state.common,
         message: state.entities.message,
         blacklist: state.entities.blacklist,
-        messageList: getTabMessages(state, props)
+        messageList: getTabMessages(state, props),
     }),
     dispatch => ({
       sendTxtMessage: (chatType, id, message) => dispatch(MessageActions.sendTxtMessage(chatType, id, message)),
