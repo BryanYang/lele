@@ -58,10 +58,10 @@ WebIM.conn.listen({
         store.dispatch(BlacklistActions.getBlacklist())
 
         // fetch grouplist
-        // store.dispatch(GroupActions.getGroups())
+        store.dispatch(GroupActions.getGroups())
 
         // fetch chatrooms
-        // store.dispatch(ChatRoomActions.getChatRooms())
+        store.dispatch(ChatRoomActions.getChatRooms())
 
         store.dispatch(LoginActions.stopLoging())
 

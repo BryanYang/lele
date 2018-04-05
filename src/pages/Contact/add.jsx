@@ -80,7 +80,7 @@ class AddContact extends React.Component {
                     type="primary"
                     size="small"
                     inline
-                    onClick={this.apply(item.uniqueId)}
+                    onClick={this.apply(item.uid)}
                   >
                     添加
                   </Button>

@@ -107,9 +107,7 @@ class App extends React.Component {
       // 1. check user auth by cookie
       const { hasToken } = this.state
       const { loginByToken } = this.props
-      console.log(utils.hasToken())
       if (hasToken) {
-        console.log(222)
           loginByToken(utils.getUserName(), utils.getToken())
       }
   }

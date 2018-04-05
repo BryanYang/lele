@@ -466,14 +466,11 @@ export const INITIAL_STATE = Immutable({
  * @returns {*}
  */
 export const addMessage = (state, { message, bodyType = "txt" }) => {
-    console.log("redux addMessage", message)
-    console.log(require('@/redux/index'))
     !message.status && (message = parseFromServer(message, bodyType))
     const rootState = require('@redux/index').store.getState();
     const username = _.get(rootState, "login.username", "")
     const { id, to, status } = message
     let { type } = message
-    console.log(message)
     // where the message comes from, when from current user, it is null
     const from = message.from || username
     // bySelf is true when sent by current user, otherwise is false

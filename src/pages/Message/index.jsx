@@ -17,6 +17,7 @@ import WebIM from "@easemob/WebIM";
 import utils from "@/utils";
 import MessageActions from "@/redux/MessageRedux";
 import ContactsScreenRedux from "@/redux/ContactsScreenRedux";
+import GroupActions from "@/redux/GroupRedux"
 import _ from "lodash";
 // import 'antd-mobile/lib/grid/style/index.css';
 import "./index.scss";
@@ -87,8 +88,9 @@ class Message extends React.Component {
   }
 
   render() {
-    const { contacts, blacklist, message, myContacts } = this.props;
+    const { contacts, blacklist, message, myContacts,  common, getGroups } = this.props;
     const items = [];
+    /*
     _.forEach(_.get(contacts, "friends", []), (name, index) => {
       if (_.includes(blacklist.names, name)) return;
       const info = utils.getLatestMessage(
@@ -105,6 +107,27 @@ class Message extends React.Component {
         ...info
       };
     });
+    */
+    // 获取群组聊天
+    console.log('获取群组聊天')
+    const groupItems = [];
+
+    console.log(contacts)
+    _.forEach(_.get(contacts, "names", []), (v, index) => {
+      const [ name, id ] = v.split("_#-#_")
+      const info = utils.getLatestMessage(_.get(message, [ chatTypes['group'], id ], []))
+      const count = message.getIn([ "unread", "groupchat", name ], 0)
+      groupItems[index] = {
+          name,
+          id,
+          unread: count,
+          latestMessage: "",
+          latestTime: "",
+          ...info
+      }
+    })
+  
+    console.log(groupItems)
 
     return (
       <div className="message" id="message">
@@ -192,8 +215,8 @@ export default withRouter(
         dispatch(MessageActions.clearUnread(chatType, id)),
       getContacts: () => {
         dispatch(ContactsScreenRedux.queryContacts());
-      }
-      // getGroups: () => dispatch(GroupActions.getGroups()),
+      },
+      getGroups: () => dispatch(GroupActions.getGroups()),
       // getChatRooms: () => dispatch(ChatRoomActions.getChatRooms())
     })
   )(Message)

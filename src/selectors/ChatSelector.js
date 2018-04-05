@@ -10,6 +10,7 @@ const chatType = {
 
 const getTabMessageArray = (state, props) => {
     const [ blank, selectTab, selectItem] = props.match.url.split('/');
+    console.log(_.get(state, [ "entities", "message"]))
     return _.get(state, [ "entities", "message", chatType[selectTab], selectItem ])
 }
 
