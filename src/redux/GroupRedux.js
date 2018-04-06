@@ -33,8 +33,6 @@ const { Types, Creators } = createActions({
             require('@/redux/index').store.dispatch(CommonActions.getGroupAlready())
             WebIM.conn.getGroup({
                 success: function(response) {
-                    logger.info(response.data)
-                    console.log(response.data)
                     dispatch(Creators.updateGroup(response.data))
                 },
                 error: function(e) {

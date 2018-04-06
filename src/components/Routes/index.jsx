@@ -46,10 +46,10 @@ const routes = [
       needAuth: false,
     },
     {
-      path: '/game',
+      path: '/game/:id',
       component: Game,
       title: '游戏厅',
-      needAuth: false,
+      needAuth: true,
     },
     {
       path: '/players',

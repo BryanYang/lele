@@ -38,6 +38,18 @@ export const INITIAL_STATE = Immutable({
 /* ------------- Reducers ------------- */
 
 export const addGroupRequest = (state, { msg }) => {
+    var options = {
+        groupId: msg.roomid,
+        success: function(resp) {
+            console.log("Response: ", resp)
+        },
+        error: function(e) {
+            if(e.type == 17){
+                console.log("您已经在这个群组里了")
+            }
+        }
+    }
+    WebIM.conn.joinGroup(options)
     return state.setIn([ "byGid", msg.gid, msg.from ], msg)
 }
 

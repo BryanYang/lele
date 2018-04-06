@@ -28,6 +28,9 @@ class Chat extends React.Component {
       isLoaded: false
     };
     this.person = this.props.match.url.split("/")[2];
+    const queryStrings = qs.parse(this.props.location.search);
+    this.type = queryStrings.type || 'personal';
+    this.group = props.match.params.id;
 
     this.handleSend = this.handleSend.bind(this);
     this.handleChange = this.handleChange.bind(this);
@@ -57,12 +60,19 @@ class Chat extends React.Component {
 
   handleSend(e) {
     // console.log(this.state.value)
-
     const { value } = this.state;
     if (!value) return;
-    this.props.sendTxtMessage("chat", this.person, {
-      msg: value
-    });
+    if(this.type === 'personal'){
+      this.props.sendTxtMessage("chat", this.person, {
+        msg: value
+      });
+    }
+    else if(this.type === 'groupchat') {
+      this.props.sendTxtMessage("groupchat", this.group, {
+        msg: value
+      }); 
+    }
+
     this.emitEmpty();
   }
 
@@ -163,6 +173,7 @@ class Chat extends React.Component {
 
   render() {
     const { messageList, match } = this.props;
+    console.log(messageList);
     const queryStrings = qs.parse(this.props.location.search);
     return (
       <div className="message" id="message">

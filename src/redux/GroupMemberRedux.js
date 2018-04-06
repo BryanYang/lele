@@ -21,12 +21,16 @@ const { Types, Creators } = createActions({
     // ---------------async------------------
     getGroupMember: id => {
         return (dispatch, getState) => {
+            console.log('获取')
             WebIM.conn.queryRoomMember({
                 roomId: id,
                 success: function (members) {
+                    console.log(members);
                     dispatch(Creators.setGroupMember(id, members))
                 },
-                error: function () { }
+                error: function (e) {
+                    console.log(e)
+                 }
             })
         }
     },
@@ -61,7 +65,8 @@ const { Types, Creators } = createActions({
                 pageNum,
                 pageSize,
                 success: response => {
-                    const members = response.data
+                    const members = response.data;
+                    console.log(members);
                     dispatch(Creators.setGroupMember(groupId, members))
                 },
                 error: e => console.log(e.message)
