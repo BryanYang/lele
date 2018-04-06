@@ -66,7 +66,7 @@ WebIM.conn.listen({
         store.dispatch(LoginActions.stopLoging())
 
         // refresh page
-        hash.indexOf(redirectUrl) === -1 && history.push(redirectUrl)
+        //hash.indexOf(redirectUrl) === -1 && history.push(redirectUrl)
     },
     onPresence: msg => {
         // console.log("onPresence", msg, store.getState())
@@ -127,7 +127,7 @@ WebIM.conn.listen({
             message.success(`${msg.mid}${I18n.t("join")}${I18n.t("group")}${msg.from}${I18n.t("successfully")}`)
             break
         case "memberJoinChatRoomSuccess":
-            message.success(`${msg.mid}${I18n.t("join")}${I18n.t("chatroom")}${msg.from}${I18n.t("successfully")}`)
+            // message.success(`${msg.mid}${I18n.t("join")}${I18n.t("chatroom")}${msg.from}${I18n.t("successfully")}`)
             break
         case "leaveChatRoom": // Leave the chat room
             break
@@ -209,7 +209,7 @@ WebIM.conn.listen({
         store.dispatch(MessageActions.updateMessageMid(id, mid))
     },
     onTextMessage: message => {
-        console.log("onTextMessage", message)
+        // console.log("onTextMessage", message)
         store.dispatch(MessageActions.addMessage(message, "txt"))
         store.dispatch(MessageActions.sendRead(message))
         const { type, from, to } = message

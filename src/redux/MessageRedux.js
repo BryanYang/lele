@@ -198,10 +198,10 @@ const { Types, Creators } = createActions({
             const chatroom = chatType === "chatroom"
             // console.log(pMessage)
             msgObj.set({
-                //TODO: cate type == 'chatrooms'
                 msg,
                 to,
                 roomType: chatroom,
+                chatType: (chatType === "chatroom" || chatType === "groupchat") ? "chatRoom" : "",
                 success: function () {
                     dispatch(Creators.updateMessageStatus(pMessage, "sent"))
                 },
@@ -213,6 +213,8 @@ const { Types, Creators } = createActions({
             if (chatType == "groupchat" || chatType == "chatroom") {
                 msgObj.setGroup("groupchat")
             }
+
+            console.log(msgObj)
 
             WebIM.conn.send(msgObj.body)
             dispatch(Creators.addMessage(pMessage, type))

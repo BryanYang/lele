@@ -64,10 +64,10 @@ const routes = [
       needAuth: false,
     },
     {
-      path: '/table',
+      path: '/table/:id',
       component: Table,
       title: '下注表',
-      needAuth: false,
+      needAuth: true,
     },
     {
       path: '/chat/:id',

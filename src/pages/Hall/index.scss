@@ -15,12 +15,6 @@
 
 .game{
     width: 100%;
-    position: absolute;
-    bottom: 0;
-    width: 100%;
-    .input{
-    }
-
     .am-grid-icon{
         display: none;
     }
@@ -43,6 +37,32 @@
     .am-grid-text{
         margin: 0;
     }
+
+    .x-message-text{
+        background: white;
+        color: black;
+        padding: 5px;
+        min-height: 35px;
+        border-radius: 4px;
+        margin: 0px;
+    }
+
+    .x-message-right{
+        .x-message-text{
+            background: rgb(221, 91, 93);
+            color: white;
+            border: none;
+        } 
+    }
+
+    .x-message-user{
+        font-size: 12px;
+    }
+
+    .x-message-time{
+        font-size: 12px;
+    }
+    
 }
 
 .game-nav{
@@ -178,3 +198,17 @@
         width: 90px;
     }
 }
+
+.state-circle{
+    height: 10px;
+    width: 10px;
+    display: inline-block;
+    border-radius: 5px;
+    background: gray; 
+    margin-left: 10px; 
+}
+
+.online{
+    background: greenyellow;
+}
+

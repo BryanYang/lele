@@ -1,6 +1,8 @@
 import React from 'react';
 import { NavBar, Icon } from 'antd-mobile';
 
+const gameController = require("@apis/controller")("gameLobby");
+
 const data = Array.from(new Array(29)).map((_val, i) => ({
   icon: 'https://gw.alipayobjects.com/zos/rmsportal/nywPmnTAvTmLusPxHPSu.png',
   text: `name${i}`,
@@ -9,6 +11,13 @@ export default class Table extends React.PureComponent {
 
   componentDidUpdate(){
 
+  }
+
+  componentDidMount(){
+    this.gameId = this.props.match.params.id;
+    gameController('betList', {id: this.gameId, version: 1 }).then(res => {
+      console.log(res);
+    })
   }
 
   render(){
@@ -36,7 +45,7 @@ export default class Table extends React.PureComponent {
       <table className="table-bet">
         <TH />
         {
-          data.map(d => <tr className="tr-num">
+          data.map((d, i) => <tr className="tr-num" key={i}>
           <td>nick name</td>
           <td>112</td>
           <td>1133</td>

@@ -35,7 +35,7 @@ export default class Hall extends React.PureComponent {
         mode="dark"
       >大厅</NavBar>
       <List className="my-list">
-        {this.state.data.map(d => <Link to={'/game/' + d.id + '?groupId=' + d.groupId} key={d.id}>
+        {this.state.data.map(d => <Link to={'/game/' + d.id + '?groupId=' + d.groupId + '&type=chatroom'} key={d.id}>
           <div className="hall-container">
             <img className="hall-img" alt="" src={d.image}/>
           </div>

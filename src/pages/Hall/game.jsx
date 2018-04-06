@@ -1,143 +1,365 @@
-import React from 'react';
-import { Icon, InputItem, Grid, NavBar } from 'antd-mobile';
-import { connect } from "react-redux"
-import qs from 'query-string';
-import {Link} from 'react-router-dom';
-import {Img} from '@components/Icon';
-import _ from 'lodash';
+import React from "react";
+import { Icon, InputItem, Grid, NavBar, Toast } from "antd-mobile";
+import ReactDOM from "react-dom"
+import { Input } from "antd";
+import { connect } from "react-redux";
+import qs from "query-string";
+import { Link } from "react-router-dom";
+import { Img } from "@components/Icon";
+import _ from "lodash";
 
-import ChatRoomActions from "@/redux/ChatRoomRedux"
+import ChatEmoji from "@components/chat/ChatEmoji";
+import Lele from "@components/lele/index";
+import getTabMessages from "@/selectors/ChatSelector";
+import MessageActions from "@/redux/MessageRedux";
+import WebIM from "@easemob/WebIM";
+import config from "@easemob/config";
+import ChatMessage from "@/components/chat/ChatMessage";
 
-import 'antd-mobile/lib/grid/style/index.css';
-import './index.scss';
+import ChatRoomActions from "@/redux/ChatRoomRedux";
 
+import "./index.scss";
 
-const gameController = require('@apis/controller')('gameLobby');
-
-const STATE = ['chat', 'game'];
-
-const DATA = ['闲', '和', '庄', '闲对', '庄对', '双对', '三宝'].map(t => ({text: t}));
-const COLORS = {'闲': '#008fe0', '和': '#29ab91', '庄': '#f15a4a', '闲对': '#008fe0', '庄对': '#f15a4a', '双对': '#fc992c', '三宝': '#3bb1f3'};
-
-const colors = (item) => {
-  return COLORS[item] || 'black';
-}
+const gameController = require("@apis/controller")("gameLobby");
+const { PAGE_NUM } = config;
+const DATA = ["闲", "庄", "闲对", "庄对", "和", "双对", "三宝"];
 
 class Game extends React.Component {
-  constructor(props){
+  constructor(props) {
     super(props);
     this.state = {
-      st: 'chat', // 当前模式， chat 或者 game,
-      actionType: '',
       gameLobby: {},
-    }
-    this.changeSt = this.changeSt.bind(this);
-    this.selectData = this.selectData.bind(this);
-    
+      value: "",
+      online: false,
+    };
+
     this.queryParams = qs.parse(props.location.search);
     this.gameId = props.match.params.id;
-    this.groupId = this.queryParams.groupId;
+    // this.groupId = this.queryParams.groupId;
+    this.groupId = "45520317906945"; // mock
+
+    this.handLeleSelect = this.handLeleSelect.bind(this);
+    this.handleSend = this.handleSend.bind(this);
+    this.handleChange = this.handleChange.bind(this);
+    this.handleEmojiSelect = this.handleEmojiSelect.bind(this);
+    this.handleEmojiCancel = this.handleEmojiCancel.bind(this);
+    this.handleKey = this.handleKey.bind(this);
+    this.handleScroll = this.handleScroll.bind(this);
+    this.onClearMessage = this.onClearMessage.bind(this);
   }
 
-  componentDidMount(){
+  componentDidMount() {
     // 将用户加入大厅
-    gameController('clickGame', {gameid: this.gameId}).then(res => {
+    gameController("clickGame", { gameid: this.gameId }).then(res => {
       // console.log(res);
       setTimeout(() => {
+        // join 聊天室
         this.props.joinChatRoom(this.groupId);
-      }, 1000)
-    })
-    
-    gameController('gameDetail', {id: this.gameId}).then(res => {
+      }, 200);
+    });
+
+    gameController("gameDetail", { id: this.gameId }).then(res => {
       this.setState({
-        gameLobby: _.get(res, 'data.gameLobbyVo') || {}
+        gameLobby: _.get(res, "data.gameLobbyVo") || {}
+      });
+    });
+
+    this.scollBottom();
+  }
+
+  componentWillReceiveProps(nextProps){
+    const { messageList=[]} = nextProps;
+    const thisMessageList = this.props.messageList || [];
+    if(thisMessageList.length !== messageList.length) {
+      this._not_scroll_bottom = false;
+    } else {
+      this._not_scroll_bottom = true;
+    }
+  }
+
+  componentDidUpdate() {
+    this.scollBottom();
+  }
+
+  componentWillUnmount(){
+    this.props.quitChatRoom(this.groupId); 
+  }
+
+  handLeleSelect(d) {
+    this.setState({
+      value: d.text
+    });
+    this.input.focus();
+  }
+
+  scollBottom() {
+    if (!this._not_scroll_bottom) {
+      setTimeout(() => {
+        const dom = this.refs["x-chat-content"];
+        if (!ReactDOM.findDOMNode(dom)) return;
+        dom.scrollTop = dom.scrollHeight;
+      }, 0);
+    }
+  }
+
+  handleChange(e) {
+    const v = e.target.value;
+    const splitValue = this.state.value ? this.state.value.split("") : [];
+    splitValue.pop();
+    if (v == splitValue.join("")) {
+      this.handleEmojiCancel();
+    } else {
+      this.setState({
+        value: v
+      });
+    }
+  }
+
+  handleSend(e) {
+    const { value } = this.state;
+    const betMsg = this.parseBetMsg(value);
+    if (!value) return;
+    if(betMsg){
+      this.bet(betMsg).then(res => {
+        if(res.code === 0) {
+          this.props.sendTxtMessage("chatroom", this.groupId, {
+            msg: value
+          });
+        } else {
+          Toast.fail(res.msg)
+        }
       })
-    })
-
-    // 加入聊天室
+    } else {
+      this.props.sendTxtMessage("chatroom", this.groupId, {
+        msg: value
+      });
+    }
+    this.emitEmpty();
   }
 
-  changeSt(){
-    const index = STATE.indexOf(this.state.st);
+  // 下注
+  bet(msg){
+    return gameController('bet', {id: this.gameId, ...msg}, 'post')
+  }
+
+  // 闲1，庄1，闲对12
+  parseBetMsg(value){
+    const res = /(^[闲|庄|闲对|庄对|和|双对|三宝]+)(\d+)$/.exec(value);
+    if(res){
+      return {
+        type: DATA.indexOf(res[1]) + 1,
+        score: res[2],
+      };
+    }
+    return null;
+  }
+
+  handleEmojiCancel() {
+    if (!this.state.value) return;
+    const arr = this.state.value.split("");
+    const len = arr.length;
+    let newValue = "";
+
+    if (arr[len - 1] != "]") {
+      arr.pop();
+      newValue = arr.join("");
+    } else {
+      const index = arr.lastIndexOf("[");
+      newValue = arr.splice(0, index).join("");
+    }
+
     this.setState({
-      st: STATE[index ^ 1],
+      value: newValue
     });
   }
 
-  selectData(d){
+  handleEmojiSelect(v) {
     this.setState({
-      actionType: d.text,
+      value: (this.state.value || "") + v.key
     });
+    this.input.focus();
   }
 
-  componentDidUpdate(){
-    this.state.st === 'chat' ? this.chatInput.focus() : this.gameInput.focus(); 
+  handleScroll = e => {
+    const _this = this;
+    if (e.target.scrollTop === 0) {
+      // TODO: optimization needed
+      setTimeout(function() {
+        const offset = _this.props.messageList
+          ? _this.props.messageList.length
+          : 0;
+        // load more history message
+        _this.props.fetchMessage(this.groupId, "chatroom", offset, res => {
+          // no more history when length less than 20
+          if (res < PAGE_NUM) {
+            _this.setState({
+              isLoaded: true
+            });
+            // _this._not_scroll_bottom = false;
+          }
+        });
+        // _this._not_scroll_bottom = true;
+      }, 500);
+    }
+  };
+
+  onClearMessage = () => {
+    const chatTypes = {
+      contact: "chat",
+      group: "groupchat",
+      chatroom: "chatroom",
+      stranger: "stranger"
+    };
+    const chatType = chatTypes["contact"];
+    this.props.clearMessage(chatType, this.person);
+  };
+
+  emitEmpty() {
+    this.setState({
+      value: ""
+      // height: 34
+    });
+    this.input.value = "";
+    this.input.focus();
   }
 
-  render(){
+  handleKey(e) {
+    if (e.keyCode == 8 || e.keycode == 46) {
+      this.handleEmojiCancel();
+    }
+  }
+
+  render() {
     const { gameLobby } = this.state;
-    return (<div>
-      <NavBar
-        mode="dark"
-        className="game-nav"
-        icon={<Icon type="left" />}
-        onLeftClick={() => this.props.history.push('/hall')}
-        rightContent={[
-          <Link key="table" to="/table/888"><Img type="tables_b" /></Link>,
-          <Link key="service" to="/service/888"><Img type="custome_service" /></Link>,
-          <Link key="players" to="/players/888"><Img type="qunliao_s" /></Link>
-        ]}
-      ><span>{gameLobby.name}(12人)</span></NavBar>
-      <div className="game" id="game">
-      {
-          this.state.st == 'chat' ? <InputItem
-          className="input"
-          placeholder="聊天内容"
-          clear
-          moneyKeyboardAlign="left"
-          ref={el => this.chatInput = el}
-      >
-          <div onClick={this.changeSt}>
-          <span style={{color: 'red'}}>LE</span>
-          </div>
-      </InputItem> : <div className="game-grid">
-          <Grid data={DATA} onClick={this.selectData} square={false}
-            renderItem={item => <div style={{color: colors(item.text)}} className="game-item" itemStyle={{height: '40px'}}>
-              {item.text}
-            </div>}
-          />
-          <InputItem
-          placeholder="数字"
-          clear
-          type="number"
-          ref={el => this.gameInput = el}
-          >
-          <div className="input-hot">
-              <div onClick={this.changeSt}>
-              <span style={{color: 'red'}}>Chat</span>
-              </div>
-              <div><span style={{color: 'gray'}}>{this.state.actionType}</span></div>
-          </div>
-          </InputItem>
-      </div>
+    const { messageList, match } = this.props;
+    const _messageList = _.cloneDeep(messageList);
+    _.each(_messageList || [], (msg, i) => {
+      if(i > 0) {
+        msg.showTime = msg.time - messageList[i-1].time > 1000 * 60 * 20; // 相邻20分钟不展示时间
+      } else {
+        msg.showTime = true; // 第一条默认显示时间 
       }
+    });
+    return (
+      <div>
+        <NavBar
+          mode="dark"
+          className="game-nav"
+          icon={<Icon type="left" />}
+          onLeftClick={() => this.props.history.push("/hall")}
+          rightContent={[
+            <Link key="table" to={`/table/${this.gameId}`}>
+              <Img type="tables_b" />
+            </Link>,
+            <Link key="service" to="/service/888">
+              <Img type="custome_service" />
+            </Link>,
+            <Link key="players" to="/players/888">
+              <Img type="qunliao_s" />
+            </Link>
+          ]}
+        >
+          <span>{gameLobby.name}<i className={"state-circle " + this.state.online ? "online" : ""} /></span>
+        </NavBar>
+        <div className="game" id="game">
+          <div
+            className="x-chat-content"
+            ref="x-chat-content"
+            onScroll={this.handleScroll}
+          >
+            {/* fixed bug of messageList.map(...) */}
+            {this.state.isLoaded && (
+              <div
+                style={{
+                  width: "150px",
+                  height: "30px",
+                  lineHeight: "30px",
+                  backgroundColor: "#888",
+                  color: "#fff",
+                  borderRadius: "15px",
+                  textAlign: "center",
+                  margin: "10px auto"
+                }}
+              >
+                没有消息
+              </div>
+            )}
+            {_.map(_messageList, message => (
+              <ChatMessage key={message.id} {...message} />
+            ))}
+          </div>
+          <div className="x-chat-footer">
+            <div className="x-list-item x-chat-ops">
+              {/* game */}
+              <div className="x-chat-ops-icon ib">
+                <Lele onSelect={this.handLeleSelect} />
+              </div>
+              {/* emoji */}
+              <div className="x-chat-ops-icon ib">
+                <ChatEmoji onSelect={this.handleEmojiSelect} />
+              </div>
+              {/* image upload */}
+              <label
+                htmlFor="uploadImage"
+                className="x-chat-ops-icon ib"
+                onClick={() =>
+                  this.image && this.image.focus() && this.image.click()
+                }
+              >
+                <i className="iconfont icon-picture" />
+                <input
+                  id="uploadImage"
+                  ref={node => (this.image = node)}
+                  onChange={this.pictureChange}
+                  type="file"
+                  className="hide"
+                />
+              </label>
+              <label
+                htmlFor="clearMessage"
+                className="x-chat-ops-icon ib"
+                onClick={this.onClearMessage}
+              >
+                <i className="icon iconfont icon-trash" />
+              </label>
+            </div>
+            <div className="x-list-item x-chat-send">
+              <Input
+                value={this.state.value}
+                onChange={this.handleChange}
+                onPressEnter={this.handleSend}
+                placeholder={"message"}
+                addonAfter={
+                  <i
+                    className="fontello icon-paper-plane"
+                    onClick={this.handleSend}
+                    style={{ cursor: "pointer" }}
+                  />
+                }
+                ref={node => (this.input = node)}
+              />
+            </div>
+          </div>
+        </div>
       </div>
-    </div>
-    )
+    );
   }
 }
 
 export default connect(
-  ({ breakpoint, entities, login, common }) => ({
-      breakpoint,
-      group: entities.group,
-      login,
-      common,
-      rightSiderOffset: entities.group.rightSiderOffset,
+  (state, props) => ({
+    messageList: getTabMessages(state, props)
   }),
   dispatch => ({
-      joinChatRoom: roomId => dispatch(ChatRoomActions.joinChatRoom(roomId)),
-      /*
+    joinChatRoom: roomId => dispatch(ChatRoomActions.joinChatRoom(roomId)),
+    quitChatRoom: roomId => dispatch(ChatRoomActions.quitChatRoom(roomId)),
+    sendTxtMessage: (chatType, id, message) =>
+      dispatch(MessageActions.sendTxtMessage(chatType, id, message)),
+    clearMessage: (chatType, id) =>
+      dispatch(MessageActions.clearMessage(chatType, id)),
+    fetchMessage: (id, chatType, offset, cb) =>
+      dispatch(MessageActions.fetchMessage(id, chatType, offset, cb))
+    /*
       getGroupMember: id => dispatch(GroupMemberActions.getGroupMember(id)),
       listGroupMemberAsync: opt => dispatch(GroupMemberActions.listGroupMemberAsync(opt)),
       switchRightSider: ({ rightSiderOffset }) => dispatch(GroupActions.switchRightSider({ rightSiderOffset })),
@@ -151,4 +373,4 @@ export default connect(
       fetchMessage: (id, chatType, offset) => dispatch(MessageActions.fetchMessage(id, chatType, offset))
       */
   })
-)(Game)
+)(Game);
