@@ -27,8 +27,8 @@ var config = {
     /*
      * Application AppKey
      */
-    // appkey: "1172170705178136#wtbj",
-    appkey: "easemob-demo#chatdemoui",
+    appkey: "1172170705178136#wtbj",
+    // appkey: "easemob-demo#chatdemoui",
 
     /*
      * Whether to use HTTPS

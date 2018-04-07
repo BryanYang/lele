@@ -1,67 +1,159 @@
-#message{
+#message {
+  width: 100%;
+  .am-list-content {
+    font-size: 14px;
+    color: #333333;
+  }
+
+  .x-chat-content{
+    top: 45px;
+  }
+  .am-list-brief {
+    font-size: 13px;
+    color: #a2a2a2;
+  }
+  .am-list-item {
+    height: 78px;
+  }
+  .am-list-thumb {
+    height: 50px;
+    width: 50px;
+    border-radius: 4px;
+    background: #f1f1f1;
+    img {
+      width: 100%;
+      height: 100%;
+      border-radius: 4px;
+    }
+  }
+
+  .am-popover .am-popover-item {
+    padding: 0 0.5rem;
+    background: gray;
+    font-size: 14px;
+  }
+  .am-popover-item-icon {
+    img {
+      width: 20px;
+      height: 20px;
+    }
+  }
+  .am-popover-item-icon {
+    widows: 16px;
+    height: 16px;
+  }
+  .message-nav-right-img {
+    background: url("../../assets/png/more@3x.png");
+    width: 20px;
+    height: 20px;
+    background-size: contain;
+  }
+
+  .x-message-content{
+    display: flex;
+  }
+  .user-pic{
+    height: 34px;
+    margin-right:10px; 
+  }
+
+  .x-message-text {
+    background: white;
+    color: black;
+    padding: 5px;
+    min-height: 35px;
+    border-radius: 4px;
+    position: relative;
+    margin: 0px;
+    &:after{
+      content: ' ';
+      width: 0;
+      height: 0; 
+      border-right: 10px solid transparent;
+      position: absolute;
+      display: inline-block;
+    }
+  }
+
+  .x-message-left{
+    .x-message-text {
+      &:after{
+        left: -3px;
+        border-top: 10px solid white; 
+        transform: rotate(-45deg);
+        top: 9px;
+      } 
+    }
+  }
+
+  .x-message-right {
+    .x-message-text {
+      background: rgb(221, 91, 93);
+      color: white;
+      border: none;
+      &:after{
+        transform: rotate(135deg);
+        border-top: 10px solid rgb(221, 91, 93); 
+        right: -3px;
+        top: 9px;
+      }
+    }
+
+    .x-message-content{
+      flex-direction: row-reverse;
+    }
+
+    .user-pic{
+      margin-left:10px; 
+    } 
+
+  }
+
+  .x-message-user {
+    font-size: 12px;
+  }
+
+  .x-message-time {
+    font-size: 12px;
+  }
+
+  .navbar{
+    position: fixed;
+    z-index: 100;
     width: 100%;
-    .am-list-content{
-        font-size: 14px;
-        color: #333333;
-    }
-    .am-list-brief{
-        font-size: 13px;
-        color: #a2a2a2;
-    }
-    .am-list-item{
-        height: 78px;
-    }
-    .am-list-thumb {
-        height: 50px;
-        width: 50px;
-        border-radius: 4px; 
-        background: #f1f1f1;
-        img{
-            width: 100%;
-            height: 100%;
-            border-radius: 4px;
-        }
-    }
+    top:0;
+  }
 
-    .am-popover .am-popover-item{
-        padding: 0 0.5rem;
-        background: gray;
-        font-size: 14px;
-    }
-    .am-popover-item-icon{
-        img{
-            width: 20px;
-            height: 20px;
-        }
-    }
-    .am-popover-item-icon{
-        widows: 16px;
-        height: 16px;;
-    }
-    .message-nav-right-img{
-        background: url('../../assets/png/more@3x.png');
-        width: 20px;
-        height: 20px;
-        background-size: contain;
-    }
+  .am-list{
+    margin-top: 44px; 
+  }
 }
-
 
 .am-popover-inner-wrapper {
-    background: gray; 
-    color: #fff;
+  background: gray;
+  color: #fff;
 }
 .am-popover-item-icon {
-    img{
-        height: 20px;
-        vertical-align:baseline;
-    }
+  img {
+    height: 20px;
+    vertical-align: baseline;
+  }
 }
 
-.am-popover-arrow{
-    background: gray;
+.am-popover-arrow {
+  background: gray;
 }
 
 .am-list-item .am-list-line .am-list-extra {
-    font-size: 14px; 
+  font-size: 14px;
+}
+
+#createGroup {
+  .user-icon {
+    margin-right: 10px; 
+  }
+  .am-checkbox.am-checkbox-checked .am-checkbox-inner {
+    background: rgb(228, 53, 58);
+    border-color: rgb(228, 53, 58);
+  }
 }

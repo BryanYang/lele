@@ -41,12 +41,11 @@ const renderTxt = txt => {
   return rnTxt;
 };
 
-export default ({ bySelf, from, time, body, status, showTime }) => {
+export default ({ bySelf, from, time, body, status, showTime, userPic, chatType }) => {
   // x-message-right
 
-  const cls = classNames("x-message-group", bySelf ? "x-message-right" : "");
+  const cls = classNames("x-message-group", bySelf ? "x-message-right" : "x-message-left");
   const localFormat = renderTime(time);
-
   let content = null;
   if (body.type == "txt") {
     content = <p className="x-message-text">{renderTxt(body.msg)}</p>;
@@ -111,19 +110,15 @@ export default ({ bySelf, from, time, body, status, showTime }) => {
   return (
     <div className={cls}>
       { showTime ? localFormat : null}
-      <div className="x-message-user">{from}</div>
+      { chatType === 'personal' ? '' : <div className="x-message-user">{from}</div>}
       <div className="x-message-content">
-        {bySelf ? statusTag : ""} {content}
+        <img src={userPic} alt="" className="user-pic"/>
+        {content}
+        {bySelf ? statusTag : ""}
       </div>
-      {bySelf ? (
-        <div className="x-message-time">
-          <span className="x-message-status" /> 
-        </div>
-      ) : (
-        <div className="x-message-time">
-          <span className="x-message-status" />
-        </div>
-      )}
+      <div className="x-message-time">
+        <span className="x-message-status" /> 
+      </div>
     </div>
   );
 };

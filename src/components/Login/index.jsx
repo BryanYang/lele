@@ -29,10 +29,11 @@ class Login extends React.PureComponent {
             Cookies.set('token', res.data.userVo.token, { expires: 7 });
             // 登录成功后，登录环信
             userController('myprofile').then(({ data }) => {
-              // this.props.doLogin(data.userVo.imusername, data.userVo.impassword)
-              // Cookies.set('imusername', data.userVo.imusername, { expires: 7 }); 
-              Cookies.set('imusername', 'yangdandan010232', { expires: 7 });  
-              this.props.doLogin('yangdandan010232', '123456') 
+              Cookies.set('imusername', data.userVo.imusername, { expires: 7 }); 
+              this.props.doLogin(data.userVo.imusername, data.userVo.impassword);
+              this.props.history.replace('/')
+              // Cookies.set('imusername', 'yangdandan010232', { expires: 7 });  
+              // this.props.doLogin('yangdandan010232', '123456') 
             })
           } else {
             Toast.info(res.msg);

@@ -19,6 +19,8 @@ const Item = List.Item;
 const Brief = Item.Brief;
 
 const { PAGE_NUM } = config;
+const DefaultImg = 'http://happyeveryone.oss-cn-shanghai.aliyuncs.com/35_3e4f3b77e4b3458eb1efd5b53b74695b.png';
+
 class Chat extends React.Component {
   constructor(props) {
     super(props);
@@ -172,9 +174,18 @@ class Chat extends React.Component {
   }
 
   render() {
-    const { messageList, match } = this.props;
-    console.log(messageList);
+    const { messageList, match, myContacts } = this.props;
     const queryStrings = qs.parse(this.props.location.search);
+    const contactInLele =
+        _.get(myContacts, 'myContacts', []).find(c => c.imusername === queryStrings.name) || {};
+    const _messageList = _.cloneDeep(messageList);
+    _.each(_messageList || [], (msg, i) => {
+      if(i > 0) {
+        msg.showTime = msg.time - messageList[i-1].time > 1000 * 60 * 20; // 相邻20分钟不展示时间
+      } else {
+        msg.showTime = true; // 第一条默认显示时间 
+      }
+    });
     return (
       <div className="message" id="message">
         <NavBar
@@ -209,7 +220,7 @@ class Chat extends React.Component {
             </div>
           )}
           {_.map(messageList, message => (
-            <ChatMessage key={message.id} {...message} />
+            <ChatMessage key={message.id} {...message} userPic={contactInLele.icon || DefaultImg} chatType={this.type}/>
           ))}
         </div>
         <div className="x-chat-footer">
@@ -289,7 +300,8 @@ export default connect(
     common: state.common,
     message: state.entities.message,
     blacklist: state.entities.blacklist,
-    messageList: getTabMessages(state, props)
+    messageList: getTabMessages(state, props),
+    myContacts: state.contacts,
   }),
   dispatch => ({
     sendTxtMessage: (chatType, id, message) =>

@@ -18,7 +18,7 @@ import utils from "@/utils";
 import MessageActions from "@/redux/MessageRedux";
 import ContactsScreenRedux from "@/redux/ContactsScreenRedux";
 import GroupActions from "@/redux/GroupRedux";
-import GroupMemberActions from '@/redux/GroupMemberRedux';
+import GroupMemberActions from "@/redux/GroupMemberRedux";
 import _ from "lodash";
 // import 'antd-mobile/lib/grid/style/index.css';
 import "./index.scss";
@@ -62,24 +62,22 @@ class Message extends React.Component {
           });
         }
       });
-    
-      // 获取群成员
+
+    // 获取群成员
     // this.props.getGroups(45386610835457)
     // getGroups(); // 这里调用他会循环调用
-
   }
 
   toChat(msg, e) {
     const { history, location, group } = this.props;
     // 群组
-    if(msg.type === 'groupchat'){
+    if (msg.type === "groupchat") {
       this.props.clearUnread("groupchat", msg.id);
       history.push(`/chat/${msg.id}?name=${msg.name}&type=groupchat`);
     } else {
       this.props.clearUnread("chat", msg.name);
       history.push(`/chat/${msg.name}?name=${msg.nickname}`);
     }
-    
   }
 
   handleVisibleChange() {
@@ -99,7 +97,15 @@ class Message extends React.Component {
   }
 
   render() {
-    const { contacts, blacklist, message, myContacts,  common, getGroups, groupContacts } = this.props;
+    const {
+      contacts,
+      blacklist,
+      message,
+      myContacts,
+      common,
+      getGroups,
+      groupContacts
+    } = this.props;
 
     // 私人聊天
     const personalItems = [];
@@ -110,8 +116,8 @@ class Message extends React.Component {
       );
       const count = message.getIn(["unread", "chat", name], 0);
       const contactInLele =
-        myContacts.myContacts.find(c => c.imusername === name) || {};
-        personalItems[index] = {
+        _.get(myContacts, 'myContacts', []).find(c => c.imusername === name) || {};
+      personalItems[index] = {
         name,
         unread: count,
         nickname: contactInLele.nickname || name,
@@ -122,20 +128,22 @@ class Message extends React.Component {
     // 获取群组聊天
     const groupItems = [];
     _.forEach(_.get(groupContacts, "names", []), (v, index) => {
-      const [ name, id ] = v.split("_#-#_")
-      const info = utils.getLatestMessage(_.get(message, [ chatTypes['group'], id ], []))
-      const count = message.getIn([ "unread", "groupchat", id ], 0)
+      const [name, id] = v.split("_#-#_");
+      const info = utils.getLatestMessage(
+        _.get(message, [chatTypes["group"], id], [])
+      );
+      const count = message.getIn(["unread", "groupchat", id], 0);
       groupItems[index] = {
-          name,
-          id,
-          type:'groupchat',
-          nickname: name,
-          unread: count,
-          latestMessage: "",
-          latestTime: "",
-          ...info
-      }
-    })
+        name,
+        id,
+        type: "groupchat",
+        nickname: name,
+        unread: count,
+        latestMessage: "",
+        latestTime: "",
+        ...info
+      };
+    });
 
     const items = [...personalItems, ...groupItems];
 
@@ -143,6 +151,7 @@ class Message extends React.Component {
       <div className="message" id="message">
         <NavBar
           mode="dark"
+          className="navbar"
           rightContent={[
             <Popover
               key={0}
@@ -216,7 +225,7 @@ export default withRouter(
     (state, props) => ({
       common: state.common,
       contacts: getCurrentContacts(state, props.match), // roster
-      groupContacts: getCurrentContacts(state, { path: 'group' }), // 群
+      groupContacts: getCurrentContacts(state, { path: "group" }), // 群
       myContacts: state.contacts,
       message: state.entities.message,
       blacklist: state.entities.blacklist
@@ -228,7 +237,8 @@ export default withRouter(
         dispatch(ContactsScreenRedux.queryContacts());
       },
       getGroups: () => dispatch(GroupActions.getGroups()),
-      listGroupMemberAsync: (groupId) => dispatch(GroupMemberActions.listGroupMemberAsync({ groupId })),
+      listGroupMemberAsync: groupId =>
+        dispatch(GroupMemberActions.listGroupMemberAsync({ groupId }))
       // getChatRooms: () => dispatch(ChatRoomActions.getChatRooms())
     })
   )(Message)
