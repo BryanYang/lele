@@ -157,3 +157,25 @@
     border-color: rgb(228, 53, 58);
   }
 }
+
+#detail{
+  height: 100%;
+  background: #f9f9f9;
+
+  .am-grid-icon{
+    width: 40px!important;
+  }
+
+  .am-grid{
+    padding: 10px 0;
+    border-bottom: 1px solid #e8e7e7;
+    /* box-sizing: content-box; */
+    background: white;
+  }
+
+  .btn-quit{
+    position: fixed;
+    width: 100%;
+    bottom: 0;
+  }
+}

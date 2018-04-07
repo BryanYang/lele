@@ -91,6 +91,9 @@ class Message extends React.Component {
       case "addContact":
         this.props.history.push("/contacts/add");
         break;
+      case "createGroup":
+        this.props.history.push("/message/createGroup");
+        break; 
       default:
         break;
     }
@@ -160,7 +163,7 @@ class Message extends React.Component {
               visible={this.state.visible}
               overlay={[
                 <Popover.Item
-                  key="groupChat"
+                  key="createGroup"
                   icon={<img src={myImg("qunliao")} alt="" />}
                 >
                   发起群聊

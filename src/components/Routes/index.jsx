@@ -10,6 +10,7 @@ import Service from '@pages/Hall/service';
 import Table from '@pages/Hall/table';
 import Chat from '@pages/Message/chat';
 import CreateGroup from '@pages/Message/createGroup';
+import GroupDetail from '@pages/Message/groupDetail';
 import Register from '@components/Login/register'
 import Login from '@components/Login/index'
 import utils from '@/utils';
@@ -46,6 +47,13 @@ const routes = [
       component: CreateGroup,
       exact: true, 
       title: '创建群聊',
+      needAuth: true,
+    },
+    {
+      path: '/message/groupDetail/:id',
+      component: GroupDetail,
+      exact: true, 
+      title: '聊天详情',
       needAuth: true,
     },
     {

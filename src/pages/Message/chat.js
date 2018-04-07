@@ -194,6 +194,9 @@ class Chat extends React.Component {
           onLeftClick={() => {
             this.props.history.goBack();
           }}
+          rightContent={this.type === 'groupchat' ? [
+            <Icon key="detail" type="ellipsis" onClick={() => this.props.history.push(`/message/groupDetail/${this.group}`)}/>
+          ]: []}
         >
           {queryStrings.name}
         </NavBar>

@@ -1,3 +1,6 @@
+/**
+ * 游戏大厅，发消息和玩游戏用
+ */
 import React from "react";
 import { Icon, InputItem, Grid, NavBar, Toast } from "antd-mobile";
 import ReactDOM from "react-dom"
