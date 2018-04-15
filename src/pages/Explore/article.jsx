@@ -1,9 +1,11 @@
 import React from 'react';
 import { NavBar, Icon } from 'antd-mobile';
 
+import './index.scss';
+
 export default class Article extends React.PureComponent {
   render(){
-     return <div style={{height: '100%'}}>
+     return <div style={{height: '100%'}} className="content">
         <NavBar
           mode="dark"
           icon={<Icon type="left" />}

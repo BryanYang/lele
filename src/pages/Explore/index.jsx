@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import { ListView, NavBar} from 'antd-mobile';
 import { TabBar, Icon, InputItem } from 'antd-mobile';
 import axios from 'axios';
+import _ from 'lodash';
 
 import { Img, Svg } from '@components/Icon';
 import Search from '@assets/svg/search.svg';
@@ -77,34 +78,38 @@ export default class Explore extends React.Component {
     this.cancelSearch = this.cancelSearch.bind(this);
     this.onEndReached = this.onEndReached.bind(this);
     this.query = { page: 1, content: '' };
+    this.informationVos = [];
   }
 
   componentDidMount() {
     this.loadData();
   }
 
-  loadData(){
+  loadData(minid){
     this.setState({isLoading: true});
     const hei = document.documentElement.clientHeight - ReactDOM.findDOMNode(this.lv).parentNode.offsetTop;
     axios.get('/app/v1/information', {
-      params: this.query
+      params: { ...this.query, minid,}
     }).then(({ data: res }) => {
       this.setState({isLoading: false, height: hei,});
       if(res.code === 0 && res.data){
-        const informationVos = res.data.informationVos || [];
+        this.informationVos = [...this.informationVos, ...(res.data.informationVos || [])] ;
         this.setState({
-          dataSource: this.state.dataSource.cloneWithRows(informationVos),
+          dataSource: this.state.dataSource.cloneWithRows(this.informationVos),
         });
+        const infos = (res.data.informationVos || []).filter(m => m.type === 0);
+        if(infos.length) this.minid = _.last(infos).id;
       }
     }) 
   }
 
   onEndReached(){
     this.query.page += 1;
-    this.loadData();
+    this.loadData(this.minid);
   }
 
   onSearch(){
+    this.informationVos = [];
     this.loadData();
   }
 
@@ -112,6 +117,7 @@ export default class Explore extends React.Component {
     this.setState({
       search: false,
     });
+    this.query.content = '';
     this.loadData();
   }
 
@@ -155,14 +161,14 @@ export default class Explore extends React.Component {
       {
         this.state.search ? <div className="search" id="explore-search">
           <InputItem className="search-input" onChange={this.searchChange}>
-            <Svg glyph="search" fill="white" onClick={this.onSearch}/> 
+            <Icon type="search" onClick={this.onSearch} size="md"/>
           </InputItem>
           <span className="cancel-search" onClick={this.cancelSearch}>取消</span>
         </div> : <NavBar
           mode="dark"
           onLeftClick={() => console.log('onLeftClick')}
           rightContent={[
-            <Svg glyph="search" key="search" fill="white" onClick={() => this.setState({search: true})}/>
+            <Icon type="search" key="search" onClick={() => this.setState({search: true})} size="md"/>
           ]}
         ><span>发现</span></NavBar>
       }
