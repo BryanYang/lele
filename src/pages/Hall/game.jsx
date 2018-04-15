@@ -3,7 +3,7 @@
  */
 import React from "react";
 import { Icon, InputItem, Grid, NavBar, Toast } from "antd-mobile";
-import ReactDOM from "react-dom"
+import ReactDOM from "react-dom";
 import { Input } from "antd";
 import { connect } from "react-redux";
 import qs from "query-string";
@@ -18,14 +18,23 @@ import MessageActions from "@/redux/MessageRedux";
 import WebIM from "@easemob/WebIM";
 import config from "@easemob/config";
 import ChatMessage from "@/components/chat/ChatMessage";
-
 import ChatRoomActions from "@/redux/ChatRoomRedux";
 
 import "./index.scss";
 
 const gameController = require("@apis/controller")("gameLobby");
+const userController = require("@apis/controller")("user");
+
 const { PAGE_NUM } = config;
 const DATA = ["闲", "庄", "闲对", "庄对", "和", "双对", "三宝"];
+const DefaultImg =
+  "http://happyeveryone.oss-cn-shanghai.aliyuncs.com/35_3e4f3b77e4b3458eb1efd5b53b74695b.png";
+
+const getLeleUser = imusername => {
+  userController("userDetail", { imusername }).then(res => {
+    console.log(res);
+  });
+};
 
 class Game extends React.Component {
   constructor(props) {
@@ -33,13 +42,14 @@ class Game extends React.Component {
     this.state = {
       gameLobby: {},
       value: "",
-      online: false,
+      online: false
     };
 
     this.queryParams = qs.parse(props.location.search);
     this.gameId = props.match.params.id;
-    // this.groupId = this.queryParams.groupId;
-    this.groupId = "45520317906945"; // mock
+    this.groupId = this.queryParams.groupId;
+    this.type = this.queryParams.type;
+    // this.groupId = "45520317906945"; // mock
 
     this.handLeleSelect = this.handLeleSelect.bind(this);
     this.handleSend = this.handleSend.bind(this);
@@ -49,6 +59,7 @@ class Game extends React.Component {
     this.handleKey = this.handleKey.bind(this);
     this.handleScroll = this.handleScroll.bind(this);
     this.onClearMessage = this.onClearMessage.bind(this);
+    this.pictureChange = this.pictureChange.bind(this);
   }
 
   componentDidMount() {
@@ -70,10 +81,10 @@ class Game extends React.Component {
     this.scollBottom();
   }
 
-  componentWillReceiveProps(nextProps){
-    const { messageList=[]} = nextProps;
+  componentWillReceiveProps(nextProps) {
+    const { messageList = [] } = nextProps;
     const thisMessageList = this.props.messageList || [];
-    if(thisMessageList.length !== messageList.length) {
+    if (thisMessageList.length !== messageList.length) {
       this._not_scroll_bottom = false;
     } else {
       this._not_scroll_bottom = true;
@@ -84,8 +95,8 @@ class Game extends React.Component {
     this.scollBottom();
   }
 
-  componentWillUnmount(){
-    this.props.quitChatRoom(this.groupId); 
+  componentWillUnmount() {
+    this.props.quitChatRoom(this.groupId);
   }
 
   handLeleSelect(d) {
@@ -122,16 +133,16 @@ class Game extends React.Component {
     const { value } = this.state;
     const betMsg = this.parseBetMsg(value);
     if (!value) return;
-    if(betMsg){
+    if (betMsg) {
       this.bet(betMsg).then(res => {
-        if(res.code === 0) {
+        if (res.code === 0) {
           this.props.sendTxtMessage("chatroom", this.groupId, {
             msg: value
           });
         } else {
-          Toast.fail(res.msg)
+          Toast.fail(res.msg);
         }
-      })
+      });
     } else {
       this.props.sendTxtMessage("chatroom", this.groupId, {
         msg: value
@@ -141,20 +152,40 @@ class Game extends React.Component {
   }
 
   // 下注
-  bet(msg){
-    return gameController('bet', {id: this.gameId, ...msg}, 'post')
+  bet(msg) {
+    return gameController("bet", { id: this.gameId, ...msg }, "post");
   }
 
   // 闲1，庄1，闲对12
-  parseBetMsg(value){
+  parseBetMsg(value) {
     const res = /(^[闲|庄|闲对|庄对|和|双对|三宝]+)(\d+)$/.exec(value);
-    if(res){
+    if (res) {
       return {
         type: DATA.indexOf(res[1]) + 1,
-        score: res[2],
+        score: res[2]
       };
     }
     return null;
+  }
+
+  pictureChange(e) {
+    const isRoom = this.type === "chatroom";
+    let file = WebIM.utils.getFileUrl(e.target);
+    if (!file.filename) {
+      this.image.value = null;
+      return false;
+    }
+
+    if (!config.imgType[file.filetype.toLowerCase()]) {
+      this.image.value = null;
+      // todo i18n
+      alert("不支持类型");
+    }
+
+    this.props.sendImgMessage(this.type, this.groupId, { isRoom }, file, () => {
+      this.image.value = null;
+    });
+    //
   }
 
   handleEmojiCancel() {
@@ -207,14 +238,8 @@ class Game extends React.Component {
   };
 
   onClearMessage = () => {
-    const chatTypes = {
-      contact: "chat",
-      group: "groupchat",
-      chatroom: "chatroom",
-      stranger: "stranger"
-    };
-    const chatType = chatTypes["contact"];
-    this.props.clearMessage(chatType, this.person);
+    const chatType = this.type;
+    this.props.clearMessage(chatType, this.groupId);
   };
 
   emitEmpty() {
@@ -234,13 +259,13 @@ class Game extends React.Component {
 
   render() {
     const { gameLobby } = this.state;
-    const { messageList, match } = this.props;
+    const { messageList, match, myContacts } = this.props;
     const _messageList = _.cloneDeep(messageList);
     _.each(_messageList || [], (msg, i) => {
-      if(i > 0) {
-        msg.showTime = msg.time - messageList[i-1].time > 1000 * 60 * 20; // 相邻20分钟不展示时间
+      if (i > 0) {
+        msg.showTime = msg.time - messageList[i - 1].time > 1000 * 60 * 20; // 相邻20分钟不展示时间
       } else {
-        msg.showTime = true; // 第一条默认显示时间 
+        msg.showTime = true; // 第一条默认显示时间
       }
     });
     return (
@@ -262,7 +287,12 @@ class Game extends React.Component {
             </Link>
           ]}
         >
-          <span>{gameLobby.name}<i className={"state-circle " + this.state.online ? "online" : ""} /></span>
+          <span>
+            {gameLobby.name}
+            <i
+              className={"state-circle " + this.state.online ? "online" : ""}
+            />
+          </span>
         </NavBar>
         <div className="game" id="game">
           <div
@@ -288,7 +318,12 @@ class Game extends React.Component {
               </div>
             )}
             {_.map(_messageList, message => (
-              <ChatMessage key={message.id} {...message} />
+              <ChatMessage
+                key={message.id}
+                {...message}
+                userPic={DefaultImg}
+                chatType={this.type}
+              />
             ))}
           </div>
           <div className="x-chat-footer">
@@ -351,13 +386,16 @@ class Game extends React.Component {
 
 export default connect(
   (state, props) => ({
-    messageList: getTabMessages(state, props)
+    messageList: getTabMessages(state, props),
+    myContacts: state.contacts
   }),
   dispatch => ({
     joinChatRoom: roomId => dispatch(ChatRoomActions.joinChatRoom(roomId)),
     quitChatRoom: roomId => dispatch(ChatRoomActions.quitChatRoom(roomId)),
     sendTxtMessage: (chatType, id, message) =>
       dispatch(MessageActions.sendTxtMessage(chatType, id, message)),
+    sendImgMessage: (chatType, id, message, source) =>
+      dispatch(MessageActions.sendImgMessage(chatType, id, message, source)),
     clearMessage: (chatType, id) =>
       dispatch(MessageActions.clearMessage(chatType, id)),
     fetchMessage: (id, chatType, offset, cb) =>

@@ -109,15 +109,12 @@ export default ({ bySelf, from, time, body, status, showTime, userPic, chatType 
 
   return (
     <div className={cls}>
-      { showTime ? localFormat : null}
-      { chatType === 'personal' ? '' : <div className="x-message-user">{from}</div>}
+      { showTime ? <div className="x-message-time">{localFormat}</div> : null}
+      { chatType === 'chat' ? '' : <div className="x-message-user">{from}</div>}
       <div className="x-message-content">
         <img src={userPic} alt="" className="user-pic"/>
         {content}
         {bySelf ? statusTag : ""}
-      </div>
-      <div className="x-message-time">
-        <span className="x-message-status" /> 
       </div>
     </div>
   );

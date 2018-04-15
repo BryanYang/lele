@@ -60,7 +60,7 @@ class GroupDetail extends React.Component {
           mode="dark"
           icon={<Icon type="left" />}
           onLeftClick={() => {
-            this.props.history.replace("/");
+            this.props.history.goBack();
           }}
         >
           群聊详情({userVos.length})

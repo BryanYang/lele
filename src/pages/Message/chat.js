@@ -1,5 +1,6 @@
 import React from "react";
 import { Icon, NavBar, InputItem, List } from "antd-mobile";
+import ReactDOM from "react-dom"
 import { Input } from "antd";
 import fetch from "../../fetch";
 import qs from "query-string";
@@ -19,7 +20,8 @@ const Item = List.Item;
 const Brief = Item.Brief;
 
 const { PAGE_NUM } = config;
-const DefaultImg = 'http://happyeveryone.oss-cn-shanghai.aliyuncs.com/35_3e4f3b77e4b3458eb1efd5b53b74695b.png';
+const DefaultImg =
+  "http://happyeveryone.oss-cn-shanghai.aliyuncs.com/35_3e4f3b77e4b3458eb1efd5b53b74695b.png";
 
 class Chat extends React.Component {
   constructor(props) {
@@ -29,10 +31,9 @@ class Chat extends React.Component {
       value: "",
       isLoaded: false
     };
-    this.person = this.props.match.url.split("/")[2];
     const queryStrings = qs.parse(this.props.location.search);
-    this.type = queryStrings.type || 'personal';
-    this.group = props.match.params.id;
+    this.type = queryStrings.type || "chat";
+    this.id = props.match.params.id;
 
     this.handleSend = this.handleSend.bind(this);
     this.handleChange = this.handleChange.bind(this);
@@ -41,11 +42,24 @@ class Chat extends React.Component {
     this.handleKey = this.handleKey.bind(this);
     this.handleScroll = this.handleScroll.bind(this);
     this.onClearMessage = this.onClearMessage.bind(this);
+    this.pictureChange = this.pictureChange.bind(this);
 
     this.logger = WebIM.loglevel.getLogger("chat component");
   }
 
-  componentDidMount() {}
+  componentDidUpdate() {
+    this.scollBottom();
+  }
+
+  scollBottom() {
+    if (!this._not_scroll_bottom) {
+      setTimeout(() => {
+        const dom = this.refs["x-chat-content"];
+        if (!ReactDOM.findDOMNode(dom)) return;
+        dom.scrollTop = dom.scrollHeight;
+      }, 0);
+    }
+  }
 
   handleChange(e) {
     const v = e.target.value;
@@ -64,17 +78,9 @@ class Chat extends React.Component {
     // console.log(this.state.value)
     const { value } = this.state;
     if (!value) return;
-    if(this.type === 'personal'){
-      this.props.sendTxtMessage("chat", this.person, {
-        msg: value
-      });
-    }
-    else if(this.type === 'groupchat') {
-      this.props.sendTxtMessage("groupchat", this.group, {
-        msg: value
-      }); 
-    }
-
+    this.props.sendTxtMessage(this.type, this.id, {
+      msg: value
+    });
     this.emitEmpty();
   }
 
@@ -125,15 +131,8 @@ class Chat extends React.Component {
           ["match", "params"],
           {}
         );
-        const chatTypes = {
-          contact: "chat",
-          group: "groupchat",
-          chatroom: "chatroom",
-          stranger: "stranger"
-        };
-        const chatType = chatTypes[selectTab];
         // load more history message
-        _this.props.fetchMessage(this.person, "chat", offset, res => {
+        _this.props.fetchMessage(this.id, this.type, offset, res => {
           // no more history when length less than 20
           if (res < PAGE_NUM) {
             _this.setState({
@@ -148,14 +147,8 @@ class Chat extends React.Component {
   };
 
   onClearMessage = () => {
-    const chatTypes = {
-      contact: "chat",
-      group: "groupchat",
-      chatroom: "chatroom",
-      stranger: "stranger"
-    };
-    const chatType = chatTypes["contact"];
-    this.props.clearMessage(chatType, this.person);
+    const chatType = this.type;
+    this.props.clearMessage(chatType, this.id);
   };
 
   emitEmpty() {
@@ -173,17 +166,42 @@ class Chat extends React.Component {
     }
   }
 
+  pictureChange(e) {
+    const isRoom = this.type === "groupchat";
+    // console.log(e, e.target)
+    let file = WebIM.utils.getFileUrl(e.target);
+    console.log(file);
+
+    if (!file.filename) {
+      this.image.value = null;
+      return false;
+    }
+
+    if (!config.imgType[file.filetype.toLowerCase()]) {
+      this.image.value = null;
+      // todo i18n
+      alert("不支持类型");
+    }
+
+    this.props.sendImgMessage(this.type, this.id, { isRoom }, file, () => {
+      this.image.value = null;
+    });
+    //
+  }
+
   render() {
     const { messageList, match, myContacts } = this.props;
     const queryStrings = qs.parse(this.props.location.search);
     const contactInLele =
-        _.get(myContacts, 'myContacts', []).find(c => c.imusername === queryStrings.name) || {};
+      _.get(myContacts, "myContacts", []).find(
+        c => c.imusername === queryStrings.name
+      ) || {};
     const _messageList = _.cloneDeep(messageList);
     _.each(_messageList || [], (msg, i) => {
-      if(i > 0) {
-        msg.showTime = msg.time - messageList[i-1].time > 1000 * 60 * 20; // 相邻20分钟不展示时间
+      if (i > 0) {
+        msg.showTime = msg.time - messageList[i - 1].time > 1000 * 60 * 20; // 相邻20分钟不展示时间
       } else {
-        msg.showTime = true; // 第一条默认显示时间 
+        msg.showTime = true; // 第一条默认显示时间
       }
     });
     return (
@@ -194,9 +212,19 @@ class Chat extends React.Component {
           onLeftClick={() => {
             this.props.history.goBack();
           }}
-          rightContent={this.type === 'groupchat' ? [
-            <Icon key="detail" type="ellipsis" onClick={() => this.props.history.push(`/message/groupDetail/${this.group}`)}/>
-          ]: []}
+          rightContent={
+            this.type === "groupchat"
+              ? [
+                  <Icon
+                    key="detail"
+                    type="ellipsis"
+                    onClick={() =>
+                      this.props.history.push(`/message/groupDetail/${this.id}`)
+                    }
+                  />
+                ]
+              : []
+          }
         >
           {queryStrings.name}
         </NavBar>
@@ -223,7 +251,12 @@ class Chat extends React.Component {
             </div>
           )}
           {_.map(messageList, message => (
-            <ChatMessage key={message.id} {...message} userPic={contactInLele.icon || DefaultImg} chatType={this.type}/>
+            <ChatMessage
+              key={message.id}
+              {...message}
+              userPic={contactInLele.icon || DefaultImg}
+              chatType={this.type}
+            />
           ))}
         </div>
         <div className="x-chat-footer">
@@ -304,11 +337,13 @@ export default connect(
     message: state.entities.message,
     blacklist: state.entities.blacklist,
     messageList: getTabMessages(state, props),
-    myContacts: state.contacts,
+    myContacts: state.contacts
   }),
   dispatch => ({
     sendTxtMessage: (chatType, id, message) =>
       dispatch(MessageActions.sendTxtMessage(chatType, id, message)),
+    sendImgMessage: (chatType, id, message, source) =>
+      dispatch(MessageActions.sendImgMessage(chatType, id, message, source)),
     clearMessage: (chatType, id) =>
       dispatch(MessageActions.clearMessage(chatType, id)),
     fetchMessage: (id, chatType, offset, cb) =>
