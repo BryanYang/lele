@@ -1,31 +1,33 @@
-.no-record{
-  font-size: 14px;
-  color: #333;
-  padding: 70px; 
-  text-align: center;
-}
-
-.more{
-  font-size: 14px;
-  text-align: center;
-  padding: 10px;
-}
-
-.am-list{
-  height: 50px;
-}
-
-.am-list-item .am-list-line .am-list-brief{
-  margin-top: 0;
-}
-
-.am-tab-bar-item{
-  & > div{
-    height: 100%;
+.my-log{
+  .no-record{
+    font-size: 14px;
+    color: #333;
+    padding: 70px; 
+    text-align: center;
   }
-}
-
-.am-list-item .am-list-line .am-list-extra{
-  flex-basis: 40%;
-  font-size: 12px;
+  
+  .more{
+    font-size: 14px;
+    text-align: center;
+    padding: 10px;
+  }
+  
+  .am-list{
+    height: 50px;
+  }
+  
+  .am-list-item .am-list-line .am-list-brief{
+    margin-top: 0;
+  }
+  
+  .am-tab-bar-item{
+    & > div{
+      height: 100%;
+    }
+  }
+  
+  .am-list-item .am-list-line .am-list-extra{
+    flex-basis: 40%;
+    font-size: 12px;
+  }
 }

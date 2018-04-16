@@ -64,7 +64,7 @@ class Com extends React.Component {
 
   render() {
     return (
-      <div>
+      <div class="my-log">
         <NavBar
           mode="dark"
           icon={<Icon type="left" />}
