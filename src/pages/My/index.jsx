@@ -7,6 +7,10 @@ import MySet from "./set";
 import Log from "./log";
 import GiveScore from './giveScore';
 import AccessScore from './accessScore';
+import Password2 from './password2';
+import Password from './password';
+import MyProfile from './profile';
+
 
 const userController = require("@apis/controller")("user");
 
@@ -41,9 +45,9 @@ class Home extends React.Component {
         <List className="profile" id="profile">
           <Item
             arrow="horizontal"
-            thumb="https://zos.alipayobjects.com/rmsportal/dNuvNrtqUztHCwM.png"
+            thumb={userVo.icon || 'http://happyeveryone.oss-cn-shanghai.aliyuncs.com/35_3e4f3b77e4b3458eb1efd5b53b74695b.png'}
             multipleLine
-            onClick={() => {}}
+            onClick={() => {this.props.history.push('./my/profile')}}
           >
             <div>{userVo.nickname || ""}</div>
             <div className="uid">ID {userVo.uniqueId || ""}</div>
@@ -94,7 +98,10 @@ class Home extends React.Component {
 
 const My = props => (
   <Switch>
+    <Route path="/my/profile" exact component={MyProfile} {...props} />
     <Route path="/my/set" exact component={MySet} {...props} />
+    <Route path="/my/set/password2"  component={Password2} {...props} />
+    <Route path="/my/set/password"  component={Password} {...props} />
     <Route path="/my/log" exact component={Log} {...props} />
     <Route path="/my/giveScore" exact component={GiveScore} {...props} />
     <Route path="/my/accessScore" exact component={AccessScore} {...props} />

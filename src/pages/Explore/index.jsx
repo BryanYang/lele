@@ -109,6 +109,7 @@ export default class Explore extends React.Component {
   }
 
   onSearch(){
+    this.query.page = 1;
     this.informationVos = [];
     this.loadData();
   }
@@ -134,7 +135,7 @@ export default class Explore extends React.Component {
       const obj = rowData[rowID];
       const showAd = obj.type === 1;
       return (
-        <div key={obj.id}>
+        <div key={obj.id} className="section-body">
         {
           showAd ? <Link to={`/article/${encodeURIComponent(obj.detailurl)}`} >
             <div className="ad">
@@ -161,7 +162,9 @@ export default class Explore extends React.Component {
       {
         this.state.search ? <div className="search" id="explore-search">
           <InputItem className="search-input" onChange={this.searchChange}>
-            <Icon type="search" onClick={this.onSearch} size="md"/>
+            <div style={{lineHeight: 0}}>
+              <Icon type="search" onClick={this.onSearch} style={{color: 'white'}} size="md"/>
+            </div>
           </InputItem>
           <span className="cancel-search" onClick={this.cancelSearch}>取消</span>
         </div> : <NavBar

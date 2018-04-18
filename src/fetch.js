@@ -6,7 +6,7 @@ axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded
 axios.interceptors.request.use(function (config) {
   // Do something before request is sent
   if(config.method === 'post'){
-    config.data = config.data + '&token=' + Cookies.get('token');
+    config.data = config.data + '&token=' + encodeURIComponent(Cookies.get('token'));
   } else {
     config.params = Object.assign({}, config.params, {token: Cookies.get('token')})
   }

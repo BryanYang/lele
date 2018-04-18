@@ -8,6 +8,16 @@
   flex-direction: column;
 }
 
+.section-body{
+  a{
+    color: #333333;
+    &:visited{
+      color: #a2a2a2;
+    }
+  }
+
+}
+
 a{
   text-decoration: none;
   color: #333333;
@@ -56,6 +66,17 @@ a{
 
 .article{
   border: none;
+  overflow: scroll;
+  height: 100%;  
+    overflow: auto;  
+   -webkit-overflow-scrolling: touch; 
+  position: fixed;   
+  right: 0;   
+  bottom: 0;   
+  left: 0;  
+  top: 0;  
+  -webkit-overflow-scrolling: touch;  
+  overflow-y: scroll;  
 }
 
 .ad{
