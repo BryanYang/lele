@@ -10,10 +10,26 @@ import Add from "./add";
 import ContactsScreenRedux from "@/redux/ContactsScreenRedux";
 
 const Item = List.Item;
-const userController = require('@apis/controller')('user');
-
+const userController = require("@apis/controller")("user");
 
 class ContactIndex extends React.Component {
+  constructor(props) {
+    super(props);
+    this.search = this.search.bind(this);
+    this.state = {
+      filterFun: () => true,
+      searchContent: '',
+    };
+  }
+
+  search() {
+    this.setState({
+      filterFun: v =>{
+        return v.nickname.toLowerCase().includes(this.state.searchContent.toLowerCase())
+      }
+    });
+  }
+
   componentDidMount() {
     this.props.getContacts();
   }
@@ -25,17 +41,28 @@ class ContactIndex extends React.Component {
     history.push(`/chat/${msg.imusername}?name=${msg.nickname}`);
   }
 
-  delete(id){
-    userController('deleteFriend', {otherUid: id}, 'delete').then(res => {
+  delete(id) {
+    userController("deleteFriend", { otherUid: id }, "delete").then(res => {
       this.props.getContacts();
-    })
+    });
   }
 
   render() {
     const { applyList = [], myContacts = [] } = this.props.contacts;
     return (
-      <div>
-        <SearchBar placeholder="Search" />
+      <div id="contact">
+        <SearchBar
+          placeholder="Search"
+          value={this.state.searchContent}
+          onSubmit={this.search}
+          onChange={v => this.setState({searchContent: v})}
+          onCancel={() => {
+            this.setState({
+              filterFun: () => true,
+              searchContent: '',
+            });
+          }}
+        />
         <List>
           <Item
             key="new_f"
@@ -55,14 +82,16 @@ class ContactIndex extends React.Component {
           <Item
             key="group"
             thumb={require("@assets/png/groupchat@3x.png")}
-            onClick={() => {}}
+            onClick={() => {
+              this.props.history.push("/message/createGroup");
+            }}
           >
             群聊
           </Item>
         </List>
         <br />
         <List>
-          {myContacts.map(item => (
+          {myContacts.filter(this.state.filterFun).map(item => (
             <SwipeAction
               style={{ backgroundColor: "gray" }}
               autoClose

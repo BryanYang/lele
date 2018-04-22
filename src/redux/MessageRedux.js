@@ -370,7 +370,6 @@ const { Types, Creators } = createActions({
     initUnread: () => {
         return (dispatch) => {
             AppDB.getUnreadList().then(res => {
-
                 let collection = {
                     "chat": {},
                     "chatroom": {},

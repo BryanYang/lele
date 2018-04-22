@@ -19,6 +19,7 @@ class GroupDetail extends React.Component {
       }
     };
     this.quit = this.quit.bind(this);
+    this.confirm = this.confirm.bind(this);
   }
 
   componentDidMount() {

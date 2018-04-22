@@ -9,6 +9,8 @@ import {
   Modal,
   Toast
 } from "antd-mobile";
+import axios from 'axios';
+import Cookies from 'js-cookie';
 import "./index.scss";
 
 const userController = require("@apis/controller")("user");
@@ -41,14 +43,21 @@ export default class Profile extends React.Component {
   }
 
   submit() {
-    var form = new FormData();
-    form.append("image");
+    const config = {  
+      headers:{'Content-Type':'multipart/form-data'}  
+    }
+    const formData = new FormData();
+    formData.append('nickname', this.state.nickname);
+    formData.append('token', encodeURIComponent(Cookies.get('token')));
+    this.pic && formData.append('icon', this.pic);
+    axios.post('/app/v1/user/updateUser', formData, config).then(res => {
+
+    })
+    /*
     userController(
       "updateUser",
       {
         nickname: this.state.nickname,
-        sex: 1,
-        signature: "23"
       },
       "post"
     ).then(({ code, msg }) => {
@@ -58,19 +67,15 @@ export default class Profile extends React.Component {
         Toast.info(msg);
       }
     });
+    */
   }
 
   imgSel(e) {
-    var img = new Image(); //构造JS的Image对象
-    let self = this;
-    img.onload = () => {
-      var form = new FormData();
-      form.append("image");
-    };
     var reader = new FileReader();
     reader.onload = evt => {
       this.setState({pic: evt.target.result})
     };
+    this.pic = e.target.files[0];
     reader.readAsDataURL(e.target.files[0]);
   }
 
@@ -117,9 +122,8 @@ export default class Profile extends React.Component {
             >
               昵称
             </InputItem>
-            <InputItem value={userVo.uid}>ID</InputItem>
-            <InputItem value={userVo.uniqueId}>账号</InputItem>
-            <Item extra={"extra content"}>二维码</Item>
+            <InputItem value={userVo.uid} editable={false}>ID</InputItem>
+            <InputItem value={userVo.uniqueId} editable={false}>账号</InputItem>
           </List>
           <br />
           <Button onClick={this.submit}>保存</Button>

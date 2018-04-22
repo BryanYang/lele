@@ -23,7 +23,6 @@ import './index.scss';
 class Home extends Component {
   constructor(props) {
     super(props);
-    console.log(props);
     this.state = {
       selectedTab: props.location.pathname.substr(1) || 'explore',
       fullScreen: false,
@@ -31,7 +30,6 @@ class Home extends Component {
   }
 
   componentWillReceiveProps(next){
-   console.log(next) 
   }
 
   renderContent(pageText) {
@@ -53,6 +51,7 @@ class Home extends Component {
   }
 
   render() {
+    const unread = Object.keys(this.props.entities.message.unread.chat).length;
     return (
       <div className="home">
         <TabBar
@@ -93,7 +92,7 @@ class Home extends Component {
             selectedIcon={<Img type="message_alt"/>}
             title="消息"
             key="message"
-            dot
+            dot={unread > 0}
             selected={this.state.selectedTab === 'message'}
             onPress={() => {
               this.props.history.push('/message')
@@ -133,12 +132,12 @@ class Home extends Component {
 
 export default withRouter(
   connect(
-      ({ breakpoint, entities, login, common, layout }) => ({
-          breakpoint,
-          login,
-          common,
-          layout,
-      }),
+      (state, props) => {
+        return {
+          layout: state.layout,
+          entities: state.entities,
+        }
+      },
       dispatch => ({
           getGroupMember: id => dispatch(GroupMemberActions.getGroupMember(id)),
           listGroupMemberAsync: opt => dispatch(GroupMemberActions.listGroupMemberAsync(opt)),

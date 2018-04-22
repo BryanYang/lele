@@ -1,10 +1,15 @@
 #message {
   width: 100%;
   .am-list-content {
+    padding-left:15px; 
     font-size: 14px;
     color: #333333;
   }
-
+  .am-badge{
+    position: absolute;
+    top: 3px;
+    left: -10px;
+  }
   .x-chat-content{
     top: 45px;
   }
@@ -19,6 +24,7 @@
     height: 50px;
     width: 50px;
     border-radius: 4px;
+    margin-right: 0px; 
     background: #f1f1f1;
     img {
       width: 100%;

@@ -19,6 +19,7 @@ import MessageActions from "@/redux/MessageRedux";
 import ContactsScreenRedux from "@/redux/ContactsScreenRedux";
 import GroupActions from "@/redux/GroupRedux";
 import GroupMemberActions from "@/redux/GroupMemberRedux";
+import axios from "axios";
 import _ from "lodash";
 // import 'antd-mobile/lib/grid/style/index.css';
 import "./index.scss";
@@ -41,7 +42,9 @@ class Message extends React.Component {
     super(props);
     this.state = {
       sysMsgs: [],
-      visible: false
+      visible: false,
+      halls: [],
+      loadingHalls: true
     };
     this.toChat = this.toChat.bind(this);
     this.handleVisibleChange = this.handleVisibleChange.bind(this);
@@ -62,10 +65,22 @@ class Message extends React.Component {
           });
         }
       });
-
+    this.loadHall();
     // 获取群成员
     // this.props.getGroups(45386610835457)
     // getGroups(); // 这里调用他会循环调用
+  }
+
+  loadHall() {
+    this.setState({ loadingHalls: true });
+    axios.get("/app/v1/gameLobby").then(({ data: res }) => {
+      this.setState({ loadingHalls: false });
+      if (res.code === 0 && res.data) {
+        this.setState({
+          halls: res.data.gameLobbyVos
+        });
+      }
+    });
   }
 
   toChat(msg, e) {
@@ -93,7 +108,7 @@ class Message extends React.Component {
         break;
       case "createGroup":
         this.props.history.push("/message/createGroup");
-        break; 
+        break;
       default:
         break;
     }
@@ -119,7 +134,8 @@ class Message extends React.Component {
       );
       const count = message.getIn(["unread", "chat", name], 0);
       const contactInLele =
-        _.get(myContacts, 'myContacts', []).find(c => c.imusername === name) || {};
+        _.get(myContacts, "myContacts", []).find(c => c.imusername === name) ||
+        {};
       personalItems[index] = {
         name,
         unread: count,
@@ -136,16 +152,18 @@ class Message extends React.Component {
         _.get(message, [chatTypes["group"], id], [])
       );
       const count = message.getIn(["unread", "groupchat", id], 0);
-      groupItems[index] = {
-        name,
-        id,
-        type: "groupchat",
-        nickname: name,
-        unread: count,
-        latestMessage: "",
-        latestTime: "",
-        ...info
-      };
+      if (!this.state.halls.map(h => h.groupId).includes(String(id))) {
+        groupItems[index] = {
+          name,
+          id,
+          type: "groupchat",
+          nickname: name,
+          unread: count,
+          latestMessage: "",
+          latestTime: "",
+          ...info
+        };
+      }
     });
 
     const items = [...personalItems, ...groupItems];
@@ -189,35 +207,39 @@ class Message extends React.Component {
         >
           消息
         </NavBar>
-        <List className="my-list">
-          <Item extra={""} align="top" thumb="" multipleLine>
-            通知消息
-            <Brief>{""}</Brief>
-          </Item>
-          {items.map((d, index) => (
-            <Item
-              key={index}
-              onClick={() => {
-                this.toChat(d);
-              }}
-              extra={d.latestTime}
-              align="top"
-              thumb={
-                d.icon ||
-                "http://happyeveryone.oss-cn-shanghai.aliyuncs.com/35_3e4f3b77e4b3458eb1efd5b53b74695b.png"
-              }
-              multipleLine
-            >
-              {d.nickname}
-              <Brief>{d.latestMessage}</Brief>
-              <Badge
-                style={{ marginLeft: 10 }}
-                text={d.unread}
-                overflowCount={99}
-              />
+        {this.state.loadingHalls ? (
+          ""
+        ) : (
+          <List className="my-list">
+            <Item extra={""} align="top" thumb="" multipleLine>
+              通知消息
+              <Brief>{""}</Brief>
             </Item>
-          ))}
-        </List>
+            {items.map((d, index) => (
+              <Item
+                key={index}
+                onClick={() => {
+                  this.toChat(d);
+                }}
+                extra={d.latestTime}
+                align="top"
+                thumb={
+                  d.icon ||
+                  "http://happyeveryone.oss-cn-shanghai.aliyuncs.com/35_3e4f3b77e4b3458eb1efd5b53b74695b.png"
+                }
+                multipleLine
+              >
+                {d.nickname}
+                <Brief>{d.latestMessage}</Brief>
+                <Badge
+                  style={{ marginLeft: 10 }}
+                  text={d.unread}
+                  overflowCount={99}
+                />
+              </Item>
+            ))}
+          </List>
+        )}
       </div>
     );
   }
