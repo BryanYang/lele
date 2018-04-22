@@ -48,10 +48,14 @@ export default class Profile extends React.Component {
     }
     const formData = new FormData();
     formData.append('nickname', this.state.nickname);
-    formData.append('token', encodeURIComponent(Cookies.get('token')));
+    formData.append('token', Cookies.get('token'));
     this.pic && formData.append('icon', this.pic);
     axios.post('/app/v1/user/updateUser', formData, config).then(res => {
-
+      if(res.data.code === 0) {
+        Toast.info('修改成功')
+      } else {
+        Toast.info(res.data.msg)
+      }
     })
     /*
     userController(
