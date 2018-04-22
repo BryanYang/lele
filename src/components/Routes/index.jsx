@@ -69,7 +69,7 @@ const routes = [
       needAuth: true,
     },
     {
-      path: '/players',
+      path: '/players/:id',
       component: Players,
       title: '玩家',
       needAuth: false,

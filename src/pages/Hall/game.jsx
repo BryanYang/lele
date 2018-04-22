@@ -40,7 +40,9 @@ class Game extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      gameLobby: {},
+      gameLobby: {
+        serviceUserVo: {}
+      },
       value: "",
       online: false
     };
@@ -74,7 +76,10 @@ class Game extends React.Component {
 
     gameController("gameDetail", { id: this.gameId }).then(res => {
       this.setState({
-        gameLobby: _.get(res, "data.gameLobbyVo") || {}
+        gameLobby: {
+          serviceUserVo: {},
+          ...(_.get(res, "data.gameLobbyVo") || {})
+        }
       });
     });
 
@@ -279,10 +284,15 @@ class Game extends React.Component {
             <Link key="table" to={`/table/${this.gameId}`}>
               <Img type="tables_b" />
             </Link>,
-            <Link key="service" to="/service/888">
+            <Link
+              key="service"
+              to={`/chat/${gameLobby.serviceUserVo.imusername}?name=${
+                gameLobby.serviceUserVo.nickname
+              }&type=stranger`}
+            >
               <Img type="custome_service" />
             </Link>,
-            <Link key="players" to="/players/888">
+            <Link key="players" to={`/players/${this.gameId}`}>
               <Img type="qunliao_s" />
             </Link>
           ]}
@@ -366,7 +376,7 @@ class Game extends React.Component {
                 value={this.state.value}
                 onChange={this.handleChange}
                 onPressEnter={this.handleSend}
-                placeholder={"message"}
+                placeholder={"请输入..."}
                 addonAfter={
                   <i
                     className="fontello icon-paper-plane"

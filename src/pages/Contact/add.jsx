@@ -25,7 +25,8 @@ class AddContact extends React.Component {
     userController("myprofile").then(({ data }) => {
       if (data.userVo) {
         this.setState({
-          inviteCode: data.userVo.inviteCode
+          inviteCode: data.userVo.inviteCode,
+          uniqueId: data.userVo.uniqueId
         });
       }
     });
@@ -99,7 +100,7 @@ class AddContact extends React.Component {
           <p className="user-not-found">{this.state.error}</p>
         )}
 
-        <p className="inviteCode">我的ID: {this.state.inviteCode}</p>
+        <p className="inviteCode">我的ID: {this.state.uniqueId}</p>
       </div>
     );
   }

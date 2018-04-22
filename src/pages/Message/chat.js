@@ -313,7 +313,7 @@ class Chat extends React.Component {
               value={this.state.value}
               onChange={this.handleChange}
               onPressEnter={this.handleSend}
-              placeholder={"message"}
+              placeholder={"请输入..."}
               addonAfter={
                 <i
                   className="fontello icon-paper-plane"

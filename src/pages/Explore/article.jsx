@@ -13,7 +13,7 @@ export default class Article extends React.PureComponent {
             this.props.history.replace('/')
           }}
         >详情</NavBar>
-        <iframe className="article" title="detail" src={decodeURIComponent(this.props.match.params.id)}
+        <iframe className="article" title="detail" scrolling="yes" src={decodeURIComponent(this.props.match.params.id)}
           style={{width: '100%', height: '100%'}} />
       </div> 
   } 

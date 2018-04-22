@@ -20,6 +20,8 @@ const getTabMessageArray = (state, props) => {
     } else if(queryStrings.type === 'chatroom') {
         const gid = queryStrings.groupId;
         return _.get(state, [ "entities", "message", queryStrings.type, parseInt(gid) ])
+    } else if(queryStrings.type === 'stranger'){
+      return _.get(state, [ "entities", "message", queryStrings.type,  selectItem])
     }
     return _.get(state, [ "entities", "message", chatType[selectTab], selectItem ])
 }
