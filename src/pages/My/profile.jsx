@@ -50,7 +50,7 @@ export default class Profile extends React.Component {
     formData.append('nickname', this.state.nickname);
     formData.append('token', Cookies.get('token'));
     this.pic && formData.append('icon', this.pic);
-    axios.post('/app/v1/user/updateUser', formData, config).then(res => {
+    axios.post('http://118.24.151.146/app/v1/app/v1/user/updateUser', formData, config).then(res => {
       if(res.data.code === 0) {
         Toast.info('修改成功')
       } else {

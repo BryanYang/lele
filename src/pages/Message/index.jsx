@@ -73,7 +73,7 @@ class Message extends React.Component {
 
   loadHall() {
     this.setState({ loadingHalls: true });
-    axios.get("/app/v1/gameLobby").then(({ data: res }) => {
+    axios.get("http://118.24.151.146/app/v1/app/v1/gameLobby").then(({ data: res }) => {
       this.setState({ loadingHalls: false });
       if (res.code === 0 && res.data) {
         this.setState({

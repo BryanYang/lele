@@ -21,7 +21,7 @@ const controller = controller => (method, params, m = 'get') => {
     if(m === 'post' && isObj(param)){
         param = qs.stringify(param);
     }
-    const path = `/app/v1/${controller}/${method}`;
+    const path = `http://118.24.151.146/app/v1/${controller}/${method}`;
     return fetch[m](path, param).then(({data: res}) => res);
   }
   

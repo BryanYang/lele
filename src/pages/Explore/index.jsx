@@ -88,7 +88,7 @@ export default class Explore extends React.Component {
   loadData(minid){
     this.setState({isLoading: true});
     const hei = document.documentElement.clientHeight - ReactDOM.findDOMNode(this.lv).parentNode.offsetTop;
-    axios.get('/app/v1/information', {
+    axios.get('http://118.24.151.146/app/v1/app/v1/information', {
       params: { ...this.query, minid,}
     }).then(({ data: res }) => {
       this.setState({isLoading: false, height: hei,});
