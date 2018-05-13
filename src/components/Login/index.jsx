@@ -24,7 +24,7 @@ class Login extends React.PureComponent {
       if(error){
       } else {
         value.phoneModel='web';
-        axios.post('http://118.24.151.146/app/v1/app/v1/user/login', qs.stringify(value)).then(({data: res}) => {
+        axios.post('/app/v1/user/login', qs.stringify(value)).then(({data: res}) => {
           if(res.code === 0 && res.data && res.data.userVo){
             Cookies.set('token', res.data.userVo.token, { expires: 7 });
             // 登录成功后，登录环信

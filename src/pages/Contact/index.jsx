@@ -6,6 +6,7 @@ import MessageActions from "@/redux/MessageRedux";
 import "./index.scss";
 import Apply from "./apply";
 import Add from "./add";
+import GroupList from './grouplist';
 
 import ContactsScreenRedux from "@/redux/ContactsScreenRedux";
 
@@ -71,7 +72,7 @@ class ContactIndex extends React.Component {
               this.props.history.push("/contacts/apply");
             }}
           >
-            {applyList.length > 0 ? (
+            {applyList.filter(a => a.staus === 0).length > 0 ? (
               <Badge dot>
                 <span>新的朋友</span>
               </Badge>
@@ -83,7 +84,7 @@ class ContactIndex extends React.Component {
             key="group"
             thumb={require("@assets/png/groupchat@3x.png")}
             onClick={() => {
-              this.props.history.push("/message/createGroup");
+              this.props.history.push("/contacts/grouplist");
             }}
           >
             群聊
@@ -142,6 +143,7 @@ const Contact = props => {
     <Switch>
       <Route path="/contacts/apply" component={Apply} />
       <Route path="/contacts/add" component={Add} />
+      <Route path="/contacts/grouplist" component={GroupList} />
       <Route path="/contacts/" component={ContactIndexWrap} />
     </Switch>
   );

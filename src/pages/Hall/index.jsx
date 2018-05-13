@@ -18,7 +18,7 @@ export default class Hall extends React.PureComponent {
   }
 
   loadData(){
-    axios.get('http://118.24.151.146/app/v1/app/v1/gameLobby').then(({data: res}) => {
+    axios.get('/app/v1/gameLobby').then(({data: res}) => {
       if(res.code === 0 && res.data){
         this.setState({
           data: res.data.gameLobbyVos

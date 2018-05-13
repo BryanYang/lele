@@ -29,7 +29,6 @@ const { Types, Creators } = createActions({
     },
     getGroups: () => {
         return (dispatch, getState) => {
-            console.log('getGroups')
             require('@/redux/index').store.dispatch(CommonActions.getGroupAlready())
             WebIM.conn.getGroup({
                 success: function(response) {

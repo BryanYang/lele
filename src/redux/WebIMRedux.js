@@ -228,10 +228,14 @@ WebIM.conn.listen({
         }
     },
     onPictureMessage: message => {
+         // 为什么游戏是组聊天，应该是聊天室
+        if(message.from === "admin") {
+          message.type = "chatroom";
+        }
         console.log("onPictureMessage", message)
         store.dispatch(MessageActions.addMessage(message, "img"))
         store.dispatch(MessageActions.sendRead(message))
-        const { type, from, to } = message
+        const { type, from, to } = message;
         switch (type) {
         case "chat":
             store.dispatch(RosterActions.topRoster(from))

@@ -70,8 +70,10 @@ export const updateChatRooms = (state, { rooms }) => {
     })
 }
 
-export const topChatroom = (state, { roomId }) => {
+export const topChatroom = (state, roomId) => {
+  console.log(state);
     let names = state.getIn([ "names" ], Immutable([])).asMutable()
+    console.log(names);
     for (let i = 0; i < names.length; i++) {
         const name = names[i]
         if (name.split("_#-#_")[1] === roomId) {

@@ -11,6 +11,11 @@
   -webkit-overflow-scrolling: touch; 
 }
 
+.am-list-view-scrollview, .am-list, .am-list-body {
+  overflow: auto;  
+  -webkit-overflow-scrolling: touch; 
+}
+
 .section-body{
   a{
     color: #333333;
@@ -69,8 +74,6 @@ a{
 
 .article{
   border: none;
-  
-   
 }
 
 .ad{

@@ -12,7 +12,7 @@ import {
 import axios from 'axios';
 import Cookies from 'js-cookie';
 import "./index.scss";
-
+const copy = require('clipboard-copy')
 const userController = require("@apis/controller")("user");
 const Item = List.Item;
 
@@ -26,6 +26,7 @@ export default class Profile extends React.Component {
     };
     this.submit = this.submit.bind(this);
     this.imgSel = this.imgSel.bind(this);
+    this.copy = this.copy.bind(this);
   }
 
   componentDidMount() {
@@ -50,7 +51,7 @@ export default class Profile extends React.Component {
     formData.append('nickname', this.state.nickname);
     formData.append('token', Cookies.get('token'));
     this.pic && formData.append('icon', this.pic);
-    axios.post('http://118.24.151.146/app/v1/app/v1/user/updateUser', formData, config).then(res => {
+    axios.post('/app/v1/user/updateUser', formData, config).then(res => {
       if(res.data.code === 0) {
         Toast.info('修改成功')
       } else {
@@ -81,6 +82,12 @@ export default class Profile extends React.Component {
     };
     this.pic = e.target.files[0];
     reader.readAsDataURL(e.target.files[0]);
+  }
+
+  copy(){
+    if(copy(this.state.userVo.inviteCode)){
+      Toast.success('复制成功');
+    }
   }
 
   render() {
@@ -128,6 +135,7 @@ export default class Profile extends React.Component {
             </InputItem>
             <InputItem value={userVo.uid} editable={false}>ID</InputItem>
             <InputItem value={userVo.uniqueId} editable={false}>账号</InputItem>
+            <InputItem value={userVo.inviteCode} editable={false}  extra={<span onClick={this.copy}>复制</span>}>邀请码</InputItem>
           </List>
           <br />
           <Button onClick={this.submit}>保存</Button>

@@ -299,14 +299,6 @@ class Chat extends React.Component {
                 className="hide"
               />
             </label>
-
-            <label
-              htmlFor="clearMessage"
-              className="x-chat-ops-icon ib"
-              onClick={this.onClearMessage}
-            >
-              <i className="icon iconfont icon-trash" />
-            </label>
           </div>
           <div className="x-list-item x-chat-send">
             <Input
@@ -315,11 +307,7 @@ class Chat extends React.Component {
               onPressEnter={this.handleSend}
               placeholder={"请输入..."}
               addonAfter={
-                <i
-                  className="fontello icon-paper-plane"
-                  onClick={this.handleSend}
-                  style={{ cursor: "pointer" }}
-                />
+               <span onClick={this.handleSend}>发送</span>
               }
               ref={node => (this.input = node)}
             />

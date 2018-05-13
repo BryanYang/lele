@@ -41,7 +41,7 @@ const renderTxt = txt => {
   return rnTxt;
 };
 
-export default ({ bySelf, from, time, body, status, showTime, userPic, chatType }) => {
+export default ({ bySelf, from, time, body={}, status, showTime, userPic, chatType }) => {
   // x-message-right
 
   const cls = classNames("x-message-group", bySelf ? "x-message-right" : "x-message-left");

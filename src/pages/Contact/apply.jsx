@@ -22,7 +22,10 @@ class Apply extends React.Component {
         {applyList.map(item => (
           <Item
             key={item.id}
-            extra={<Button type="primary" size="small" inline onClick={() => this.props.applyPass(item.id)}>同意</Button>}
+            extra={item.staus === 0 ? 
+            <Button type="primary" size="small" inline onClick={() => this.props.applyPass(item.id)}>同意</Button> 
+            : item.status === 1 ? <span>已同意</span> : <span>已拒绝</span>
+          }
             multipleLine
             thumb={
               item.icon ||

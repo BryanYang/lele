@@ -106,7 +106,7 @@ class Game extends React.Component {
 
   handLeleSelect(d) {
     this.setState({
-      value: d.text
+      value: d.text + ':'
     });
     this.input.focus();
   }
@@ -144,6 +144,7 @@ class Game extends React.Component {
           this.props.sendTxtMessage("chatroom", this.groupId, {
             msg: value
           });
+          Toast.success('下注成功');
         } else {
           Toast.fail(res.msg);
         }
@@ -163,7 +164,7 @@ class Game extends React.Component {
 
   // 闲1，庄1，闲对12
   parseBetMsg(value) {
-    const res = /(^[闲|庄|闲对|庄对|和|双对|三宝]+)(\d+)$/.exec(value);
+    const res = /(^[闲|庄|闲对|庄对|和|双对|三宝]+):(\d+)$/.exec(value);
     if (res) {
       return {
         type: DATA.indexOf(res[1]) + 1,
@@ -363,13 +364,6 @@ class Game extends React.Component {
                   className="hide"
                 />
               </label>
-              <label
-                htmlFor="clearMessage"
-                className="x-chat-ops-icon ib"
-                onClick={this.onClearMessage}
-              >
-                <i className="icon iconfont icon-trash" />
-              </label>
             </div>
             <div className="x-list-item x-chat-send">
               <Input
@@ -378,11 +372,7 @@ class Game extends React.Component {
                 onPressEnter={this.handleSend}
                 placeholder={"请输入..."}
                 addonAfter={
-                  <i
-                    className="fontello icon-paper-plane"
-                    onClick={this.handleSend}
-                    style={{ cursor: "pointer" }}
-                  />
+                  <span onClick={this.handleSend}>发送</span>
                 }
                 ref={node => (this.input = node)}
               />
