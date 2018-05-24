@@ -9,6 +9,7 @@ import emoji from "@/easemob/emoji";
 import { Card, Tag } from "antd";
 // import Audio from "@/components/chat/Audio"
 import WebIM from "@/easemob/WebIM";
+const userController = require('@apis/controller')('user');
 
 const renderTxt = txt => {
   let rnTxt = [];
@@ -41,81 +42,103 @@ const renderTxt = txt => {
   return rnTxt;
 };
 
-export default ({ bySelf, from, time, body={}, status, showTime, userPic, chatType }) => {
-  // x-message-right
 
-  const cls = classNames("x-message-group", bySelf ? "x-message-right" : "x-message-left");
-  const localFormat = renderTime(time);
-  let content = null;
-  if (body.type == "txt") {
-    content = <p className="x-message-text">{renderTxt(body.msg)}</p>;
-  } else if (body.type == "img") {
-    content = (
-      <div className="x-message-img">
-        <img src={body.url} width="100%" style={{ verticalAlign: "middle" }} />
-      </div>
-    );
-  } else if (body.type == "file") {
-    const readablizeBytes = bytes => {
-      let s = ["Bytes", "KB", "MB", "GB", "TB", "PB"];
-      var e = Math.floor(Math.log(bytes) / Math.log(1024));
-      return (bytes / Math.pow(1024, Math.floor(e))).toFixed(2) + " " + s[e];
-    };
-    content = (
-      <Card
-        title={I18n.t("file")}
-        style={{ width: 240, margin: "2px 2px 2px 0" }}
-      >
-        <div className="x-message-file">
-          <h3 title={body.filename}>{body.filename}</h3>
-          <div className="ant-row">
-            <div className="ant-col-12">
-              <p>{readablizeBytes(body.file_length)}</p>
-            </div>
-            <div className="ant-col-12">
-              <a href={body.url} download={body.filename}>
-                {I18n.t("download")}
-              </a>
+export default class Message extends React.Component {
+
+  constructor(props){
+    super(props)
+    this.state = {
+      userVo: {
+
+      }
+    }
+  }
+
+  componentDidMount(){
+    const { from } = this.props;
+    if(from) {
+    userController('userDetail', {imusername: from}).then(({ data }) => {
+      this.setState({ userVo: data.userVo })
+    })
+    }
+  }
+
+  render(){
+    const { bySelf, from, time, body={}, status, showTime, userPic, chatType } = this.props;
+    const cls = classNames("x-message-group", bySelf ? "x-message-right" : "x-message-left");
+    const localFormat = renderTime(time);
+    let content = null;
+    if (body.type == "txt") {
+      content = <p className="x-message-text">{renderTxt(body.msg)}</p>;
+    } else if (body.type == "img") {
+      content = (
+        <div className="x-message-img">
+          <img src={body.url} width="100%" style={{ verticalAlign: "middle" }} />
+        </div>
+      );
+    } else if (body.type == "file") {
+      const readablizeBytes = bytes => {
+        let s = ["Bytes", "KB", "MB", "GB", "TB", "PB"];
+        var e = Math.floor(Math.log(bytes) / Math.log(1024));
+        return (bytes / Math.pow(1024, Math.floor(e))).toFixed(2) + " " + s[e];
+      };
+      content = (
+        <Card
+          title={I18n.t("file")}
+          style={{ width: 240, margin: "2px 2px 2px 0" }}
+        >
+          <div className="x-message-file">
+            <h3 title={body.filename}>{body.filename}</h3>
+            <div className="ant-row">
+              <div className="ant-col-12">
+                <p>{readablizeBytes(body.file_length)}</p>
+              </div>
+              <div className="ant-col-12">
+                <a href={body.url} download={body.filename}>
+                  {I18n.t("download")}
+                </a>
+              </div>
             </div>
           </div>
+        </Card>
+      );
+    } else if (body.type == "video") {
+      content = (
+        <div className="x-message-video">
+          <video src={body.url} width="100%" controls />
         </div>
-      </Card>
-    );
-  } else if (body.type == "video") {
-    content = (
-      <div className="x-message-video">
-        <video src={body.url} width="100%" controls />
+      );
+    } else if (body.type == "audio") {
+      content = <div className="x-message-audio" />;
+    }
+
+    let statusTag;
+    switch (status) {
+      case "sent":
+        statusTag = <Tag color="#f39c12">{I18n.t("unread")}</Tag>;
+        break;
+      case "muted":
+        statusTag = <Tag color="#f50">{I18n.t("muted")}</Tag>;
+        break;
+      case "fail":
+        statusTag = <Tag color="#f50">{I18n.t("sentFailed")}</Tag>;
+        break;
+      default:
+        statusTag = "";
+        break;
+    }
+
+    return (
+      <div className={cls}>
+        { showTime ? <div className="x-message-time">{localFormat}</div> : null}
+        { chatType === 'chat' ? '' : <div className="x-message-user">{this.state.userVo.nickname}</div>}
+        <div className="x-message-content">
+          <img src={this.state.userVo.icon} alt="" className="user-pic"/>
+          {content}
+          {bySelf ? statusTag : ""}
+        </div>
       </div>
     );
-  } else if (body.type == "audio") {
-    content = <div className="x-message-audio" />;
   }
+}
 
-  let statusTag;
-  switch (status) {
-    case "sent":
-      statusTag = <Tag color="#f39c12">{I18n.t("unread")}</Tag>;
-      break;
-    case "muted":
-      statusTag = <Tag color="#f50">{I18n.t("muted")}</Tag>;
-      break;
-    case "fail":
-      statusTag = <Tag color="#f50">{I18n.t("sentFailed")}</Tag>;
-      break;
-    default:
-      statusTag = "";
-      break;
-  }
-
-  return (
-    <div className={cls}>
-      { showTime ? <div className="x-message-time">{localFormat}</div> : null}
-      { chatType === 'chat' ? '' : <div className="x-message-user">{from}</div>}
-      <div className="x-message-content">
-        <img src={userPic} alt="" className="user-pic"/>
-        {content}
-        {bySelf ? statusTag : ""}
-      </div>
-    </div>
-  );
-};

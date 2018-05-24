@@ -57,7 +57,6 @@ class AddContact extends React.Component {
 
 
   render() {
-    const { applyList } = this.props.contacts;
     return (
       <div id="add">
         <NavBar

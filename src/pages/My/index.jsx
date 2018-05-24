@@ -52,7 +52,7 @@ class Home extends React.Component {
             <div>{userVo.nickname || ""}</div>
             <div className="uid">ID {userVo.uniqueId || ""}</div>
             <Brief>
-              <span className="score">身上 {userVo.safeScore}</span>
+              <span className="score">身上 {userVo.gameScore}</span>
             </Brief>
           </Item>
         </List>
@@ -84,7 +84,7 @@ class Home extends React.Component {
           <Item
             arrow="horizontal"
             thumb={require("@assets/png/setting@3x.png")}
-            className="set-btn"
+            className=""
           >
             <Link to="/my/set">
               <div>设置</div>

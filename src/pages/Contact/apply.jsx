@@ -9,7 +9,7 @@ const Item = List.Item;
 class Apply extends React.Component {
 
   render(){
-    const {applyList} = this.props.contacts;
+    const {applyList = []} = this.props.contacts;
     return  <div id="apply">
       <NavBar
         mode="dark"
@@ -18,7 +18,8 @@ class Apply extends React.Component {
           this.props.history.goBack();
         }}
       >新的朋友</NavBar>
-      <List>
+      {
+        applyList.length > 0 ? <List>
         {applyList.map(item => (
           <Item
             key={item.id}
@@ -38,7 +39,8 @@ class Apply extends React.Component {
             </List.Item.Brief>
           </Item>
         ))}
-      </List>
+      </List> : <div style={{textAlign: 'center', color: 'gray', fontSize: 16, marginTop: 20 }}>暂无好友请求</div>
+      }
     </div>
   }
 }

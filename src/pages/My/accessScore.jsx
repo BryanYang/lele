@@ -121,7 +121,7 @@ export default class AccessScore extends React.Component {
         >
           <InputItem
             className="score-input"
-            placeholder={`可转出身上分${userVo.gameScore || 0}`}
+            placeholder={`可转出到身上分${userVo.safeScore || 0}`}
             type="number"
             labelNumber={3}
             onChange={v => {
@@ -140,7 +140,7 @@ export default class AccessScore extends React.Component {
           </InputItem>
           <InputItem
             className="score-input"
-            placeholder={`可转出保险箱${userVo.safeScore || 0}`}
+            placeholder={`可转出到保险箱${userVo.gameScore || 0}`}
             type="number"
             labelNumber={3}
             onChange={v => this.setState({ s2: v })}

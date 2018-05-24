@@ -43,6 +43,7 @@ class Game extends React.Component {
       gameLobby: {
         serviceUserVo: {}
       },
+      userVo: {},
       value: "",
       online: false
     };
@@ -83,6 +84,16 @@ class Game extends React.Component {
       });
     });
 
+    userController("myprofile").then(({ code, data, msg }) => {
+      if (code === 0 && data.userVo) {
+        this.setState({
+          userVo: data.userVo
+        });
+      } else {
+        Toast.info(msg);
+      }
+    });
+
     this.scollBottom();
   }
 
@@ -105,6 +116,10 @@ class Game extends React.Component {
   }
 
   handLeleSelect(d) {
+    if(this.state.userVo.gameScore === 0) {
+      Toast.info('身上分不足，不能下注');
+      return;
+    }
     this.setState({
       value: d.text + ':'
     });
@@ -148,6 +163,14 @@ class Game extends React.Component {
         } else {
           Toast.fail(res.msg);
         }
+      }).then(() => {
+        userController("myprofile").then(({ code, data, msg }) => {
+          if (code === 0 && data.userVo) {
+            this.setState({
+              userVo: data.userVo
+            });
+          }
+        });
       });
     } else {
       this.props.sendTxtMessage("chatroom", this.groupId, {
@@ -341,7 +364,7 @@ class Game extends React.Component {
             <div className="x-list-item x-chat-ops">
               {/* game */}
               <div className="x-chat-ops-icon ib">
-                <Lele onSelect={this.handLeleSelect} />
+                <Lele onSelect={this.handLeleSelect} score={this.state.userVo.gameScore}/>
               </div>
               {/* emoji */}
               <div className="x-chat-ops-icon ib">

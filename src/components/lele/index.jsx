@@ -36,16 +36,19 @@ class Lele extends React.Component {
 
   renderLeleMenu() {
     return (
-      <Grid
-        data={DATA}
-        onClick={this.props.onSelect}
-        square={false}
-        renderItem={item => (
-          <div style={{ color: colors(item.text) }} className="game-item">
-            {item.text}
-          </div>
-        )}
-      />
+      <div style={{width: 300}}>
+        <div>身上分：{this.props.score}</div>
+        <Grid
+          data={DATA}
+          onClick={this.props.onSelect}
+          square={false}
+          renderItem={item => (
+            <div style={{ color: colors(item.text) }} className="game-item">
+              {item.text}
+            </div>
+          )}
+        />
+      </div>
     );
   }
 
