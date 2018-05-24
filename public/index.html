@@ -10,7 +10,20 @@
     -->
     <link rel="manifest" href="%PUBLIC_URL%/manifest.json">
     <link rel="shortcut icon" href="%PUBLIC_URL%/favicon.ico">
-    
+    <style type="text/css">
+      .loading {
+        width: 100%;
+        text-align: center;
+        margin-top: 50%; 
+      }
+      .loading > img{
+        width: 100px;
+        margin: 0 auto;
+      }
+      .loading-gif{
+        width: 12px;
+      }
+    </style>
     <!--
       Notice the use of %PUBLIC_URL% in the tags above.
       It will be replaced with the URL of the `public` folder during the build.
@@ -26,7 +39,12 @@
     <noscript>
       You need to enable JavaScript to run this app.
     </noscript>
-    <div id="root"></div>
+    <div id="root">
+      <div class="loading">
+        <img src="http://p1.meituan.net/scarlett/e0e090021457cbffb2bff5eaff29e47351839.jpg"/>
+        <div>loading <img class="loading-gif" src="http://p1.meituan.net/scarlett/c8ad9845c9414424cb5854238af212b0729.gif"/> </div>
+      </div>
+    </div>
     <!--
       This HTML file is a template.
       If you open it directly in the browser, you will see an empty page.
