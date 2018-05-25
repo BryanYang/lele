@@ -2,12 +2,19 @@ import React from 'react';
 import { NavBar, Icon, List, Button } from 'antd-mobile';
 import { withRouter, Route } from 'react-router-dom';
 import { connect } from "react-redux";
+import LayoutActions from "@/redux/LayoutRedux";
 import './index.scss';
 
 import ContactsScreenRedux from "@/redux/ContactsScreenRedux";
 const Item = List.Item;
 class Apply extends React.Component {
+  componentDidMount(){
+    this.props.hiddenTab();
+  }
 
+  componentWillUnmount(){
+    this.props.showTab();
+  }
   render(){
     const {applyList = []} = this.props.contacts;
     return  <div id="apply">
@@ -55,6 +62,12 @@ export default withRouter(
       applyPass:(id) => {
         dispatch(ContactsScreenRedux.applyPass(id))
       },
+      hiddenTab: () => {
+        dispatch(LayoutActions.hiddenTab());
+      },
+      showTab: () => {
+        dispatch(LayoutActions.showTab());
+      }
     })
   )(Apply)
 )

@@ -1,5 +1,7 @@
 import React from "react";
 import ReactDOM from 'react-dom';
+import { connect } from "react-redux";
+import LayoutActions from "@/redux/LayoutRedux";
 import {
   NavBar,
   Icon,
@@ -16,7 +18,7 @@ const copy = require('clipboard-copy')
 const userController = require("@apis/controller")("user");
 const Item = List.Item;
 
-export default class Profile extends React.Component {
+class Profile extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -30,6 +32,7 @@ export default class Profile extends React.Component {
   }
 
   componentDidMount() {
+    this.props.hiddenTab();
     userController("myprofile").then(({ code, data, msg }) => {
       if (code === 0 && data.userVo) {
         this.setState({
@@ -41,6 +44,10 @@ export default class Profile extends React.Component {
         Toast.info(msg);
       }
     });
+  }
+
+  componentWillUnmount(){
+    this.props.showTab();
   }
 
   submit() {
@@ -144,3 +151,13 @@ export default class Profile extends React.Component {
     );
   }
 }
+
+export default connect(({}) => ({}), dispatch => ({
+  hiddenTab: () => {
+    dispatch(LayoutActions.hiddenTab());
+  },
+  showTab: () => {
+    dispatch(LayoutActions.showTab());
+  }
+
+}))(Profile);

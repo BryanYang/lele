@@ -9,6 +9,8 @@ import {
   Tabs
 } from "antd-mobile";
 import "./accessScore.scss";
+import { connect } from "react-redux";
+import LayoutActions from "@/redux/LayoutRedux";
 
 const prompt = Modal.prompt;
 const alert = Modal.alert;
@@ -17,7 +19,7 @@ const tabs = [{ title: "保险箱转到身上分" }, { title: "身上分转到�
 const userController = require("@apis/controller")("user");
 const icon = require("@assets/png/dating_safebox@3x.png");
 
-export default class AccessScore extends React.Component {
+class AccessScore extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -32,6 +34,7 @@ export default class AccessScore extends React.Component {
   }
 
   componentDidMount() {
+    this.props.hiddenTab();
     userController("myprofile").then(({ code, data, msg }) => {
       if (code === 0 && data.userVo) {
         this.userVo = data.userVo;
@@ -52,6 +55,9 @@ export default class AccessScore extends React.Component {
       }
     });
   }
+  componentWillUnmount(){
+    this.props.showTab();
+  }
 
   send(pw) {
     userController(
@@ -59,7 +65,7 @@ export default class AccessScore extends React.Component {
       {
         score: this.current === 0 ? this.state.s1 : this.state.s2,
         safePwd: pw,
-        opt: this.current === 0 ? 'save' : 'get',
+        opt: this.current === 1 ? 'save' : 'get',
         phoneModel: "web"
       },
       "post"
@@ -68,6 +74,14 @@ export default class AccessScore extends React.Component {
         Toast.info(msg);
       } else {
         Toast.info("操作成功");
+        userController("myprofile").then(({ code, data, msg }) => {
+          if (code === 0 && data.userVo) {
+            this.userVo = data.userVo;
+            this.setState({
+              userVo: data.userVo
+            });
+          }
+        })
       }
     });
   }
@@ -76,7 +90,7 @@ export default class AccessScore extends React.Component {
     prompt(
       "请输入二级密码",
       <div>
-        <div>转出到 {this.current === 0 ? "保险箱" : "身上分"}</div>
+        <div>转出到 {this.current === 1 ? "保险箱" : "身上分"}</div>
         <div style={{ marginTop: 10 }}>
           <img style={{ width: 30, marginRight: 10, verticalAlign: 'middle' }} src={icon} alt="数额" />
           <span style={{fontSize: 30, color: '#333', verticalAlign: 'middle'}}>{this.current === 0 ? this.state.s1 : this.state.s2}</span>
@@ -164,3 +178,13 @@ export default class AccessScore extends React.Component {
     );
   }
 }
+
+export default connect(({}) => ({}), dispatch => ({
+  hiddenTab: () => {
+    dispatch(LayoutActions.hiddenTab());
+  },
+  showTab: () => {
+    dispatch(LayoutActions.showTab());
+  }
+
+}))(AccessScore);

@@ -16,13 +16,17 @@ class Com extends React.Component {
   constructor(props) {
     super(props);
     this.logout = this.logout.bind(this);
-    // this.props.hiddenTab();
+   
   }
 
   logout() {
     Cookies.remove("token");
     this.props.doLogout();
     // this.props.history.push('/');
+  }
+
+  componentDidMount(){
+    // this.props.hiddenTab();
   }
 
   componentWillUnMount(){

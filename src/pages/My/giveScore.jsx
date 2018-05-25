@@ -7,6 +7,8 @@ import {
   Modal,
   Toast
 } from "antd-mobile";
+import { connect } from "react-redux";
+import LayoutActions from "@/redux/LayoutRedux";
 import "./giveScore.scss";
 
 const prompt = Modal.prompt;
@@ -15,7 +17,7 @@ const alert = Modal.alert;
 const userController = require("@apis/controller")("user");
 const icon = require("@assets/png/dating_safebox@3x.png");
 
-export default class GiveScore extends React.Component {
+class GiveScore extends React.Component {
   constructor(props) {
     super(props);
     this.userUnique = "";
@@ -26,6 +28,7 @@ export default class GiveScore extends React.Component {
   }
 
   componentDidMount() {
+    this.props.hiddenTab();
     userController("myprofile").then(({ code, data, msg }) => {
       if (code === 0 && data.userVo) {
         this.userVo = data.userVo;
@@ -39,6 +42,10 @@ export default class GiveScore extends React.Component {
         Toast.info(msg);
       }
     });
+  }
+
+  componentWillUnmount(){
+    this.props.showTab();
   }
 
   send(pw) {
@@ -112,3 +119,15 @@ export default class GiveScore extends React.Component {
     );
   }
 }
+
+
+export default connect(({}) => ({}), dispatch => ({
+  hiddenTab: () => {
+    dispatch(LayoutActions.hiddenTab());
+  },
+  showTab: () => {
+    dispatch(LayoutActions.showTab());
+  }
+
+}))(GiveScore);
+

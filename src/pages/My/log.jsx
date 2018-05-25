@@ -1,6 +1,7 @@
 import React from "react";
 import { List, NavBar, Icon, Tabs } from "antd-mobile";
 import { connect } from "react-redux";
+import LayoutActions from "@/redux/LayoutRedux";
 import "./log.scss";
 
 const Item = List.Item;
@@ -30,6 +31,11 @@ class Com extends React.Component {
 
   componentDidMount() {
     this.loadData();
+    this.props.hiddenTab();
+  }
+
+  componentWillUnmount(){
+    this.props.showTab();
   }
 
   tabChange(tab, i) {
@@ -64,7 +70,7 @@ class Com extends React.Component {
 
   render() {
     return (
-      <div class="my-log">
+      <div className="my-log">
         <NavBar
           mode="dark"
           icon={<Icon type="left" />}
@@ -112,4 +118,12 @@ class Com extends React.Component {
   }
 }
 
-export default connect(({}) => ({}), dispatch => ({}))(Com);
+export default connect(({}) => ({}), dispatch => ({
+  hiddenTab: () => {
+    dispatch(LayoutActions.hiddenTab());
+  },
+  showTab: () => {
+    dispatch(LayoutActions.showTab());
+  }
+
+}))(Com);

@@ -30,6 +30,10 @@ class AddContact extends React.Component {
         });
       }
     });
+
+    userController("applyAddFriendList").then(({data}) => {
+      
+    }) 
   }
 
   submit(v) {
@@ -47,7 +51,7 @@ class AddContact extends React.Component {
 
   apply(id){
     return () => {
-      userController('applyAddFriend', {otherId: id, content: '你好啊'}, 'post').then(res => {
+      userController('applyAddFriend', {otherId: id, content: '请求添加你为好友'}, 'post').then(res => {
         if(res.code === 1) {
           Toast.info(res.msg);
         } 
