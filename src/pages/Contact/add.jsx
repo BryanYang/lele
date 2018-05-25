@@ -15,7 +15,8 @@ class AddContact extends React.Component {
     this.state = {
       searchList: [],
       inviteCode: "",
-      error: "  "
+      error: "  ",
+      sent: false,
     };
     this.submit = this.submit.bind(this);
   }
@@ -30,10 +31,6 @@ class AddContact extends React.Component {
         });
       }
     });
-
-    userController("applyAddFriendList").then(({data}) => {
-      
-    }) 
   }
 
   submit(v) {
@@ -54,6 +51,7 @@ class AddContact extends React.Component {
       userController('applyAddFriend', {otherId: id, content: '请求添加你为好友'}, 'post').then(res => {
         if(res.code === 1) {
           Toast.info(res.msg);
+          this.setState({ sent: true })
         } 
       })
     }
@@ -75,7 +73,7 @@ class AddContact extends React.Component {
         <SearchBar placeholder="ID" onSubmit={this.submit} />
         
         {!this.state.error ? (
-          <List>
+          <List >
             {this.state.searchList.map(item => (
               <Item
                 key={item.uniqueId}
@@ -86,7 +84,7 @@ class AddContact extends React.Component {
                     inline
                     onClick={this.apply(item.uid)}
                   >
-                    添加
+                    {this.state.sent ? '待验证' : '添加'}
                   </Button>
                 }
                 multipleLine

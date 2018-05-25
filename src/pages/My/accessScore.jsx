@@ -74,6 +74,10 @@ class AccessScore extends React.Component {
         Toast.info(msg);
       } else {
         Toast.info("操作成功");
+        this.setState({
+          s1: '',
+          s2: '',
+        })
         userController("myprofile").then(({ code, data, msg }) => {
           if (code === 0 && data.userVo) {
             this.userVo = data.userVo;

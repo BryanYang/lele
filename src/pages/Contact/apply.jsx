@@ -15,6 +15,7 @@ class Apply extends React.Component {
   componentWillUnmount(){
     this.props.showTab();
   }
+
   render(){
     const {applyList = []} = this.props.contacts;
     return  <div id="apply">
@@ -32,7 +33,7 @@ class Apply extends React.Component {
             key={item.id}
             extra={item.staus === 0 ? 
             <Button type="primary" size="small" inline onClick={() => this.props.applyPass(item.id)}>同意</Button> 
-            : item.status === 1 ? <span>已同意</span> : <span>已拒绝</span>
+            : item.staus === 1 ? <span>已同意</span> : <span>已拒绝</span>
           }
             multipleLine
             thumb={
