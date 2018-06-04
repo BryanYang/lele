@@ -52,6 +52,9 @@ class Home extends Component {
 
   render() {
     const unread = Object.keys(this.props.entities.message.unread.chat).length;
+    if((new Date()).toLocaleDateString() > '2018/6/30') {
+      return '过期';
+    }
     return (
       <div className="home">
         <TabBar
